@@ -1,0 +1,6 @@
+rootProject.name = 'microservices'
+
+include 'rest-mirror'
+include 'user-service'
+include 'order-service'
+
