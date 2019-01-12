@@ -1,0 +1,21 @@
+version: '3'
+services:
+#  consul:
+#    image: "consul:0.8.0"
+#    ports:
+#    - "8500:8500"
+
+  gateway-mirror:
+    image: menya84/gateway-mirror
+    ports:
+    - "8070:8070"
+
+  user-service:
+    image: menya84/user-service
+    ports:
+    - "8071:8071"
+
+  order-service:
+    image: menya84/order-service
+    ports:
+    - "8072:8072"

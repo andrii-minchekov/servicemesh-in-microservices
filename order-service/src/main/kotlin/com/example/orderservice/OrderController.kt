@@ -1,42 +1,56 @@
 package com.example.orderservice
 
 import com.example.orderservice.dto.Order
+import com.example.orderservice.dto.User
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
 
 @RestController
 @RequestMapping(
     "/orders",
-    produces = [MediaType.APPLICATION_JSON_UTF8_VALUE],
-    consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE]
+    produces = [MediaType.APPLICATION_JSON_UTF8_VALUE]
 )
-class OrderController {
-    private val cache: MutableMap<String, Order> = HashMap()
+class OrderController(@Autowired val restTemplate: RestTemplate) {
 
-    @PostMapping
+    companion object {
+        const val DEFAULT_ORDER_ID = "10000"
+        const val USER_ID = "1000"
+    }
+
+    private val repository: MutableMap<String, Order> = mutableMapOf(DEFAULT_ORDER_ID to Order())
+
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
-    fun addOrder(@RequestBody order: Order): String {
+    fun add(@RequestBody order: Order): String {
         val id = ('a'..'z').random(16)
-        cache[id] = order.copy(id = id)
+        repository[id] = order.copy(id = id)
         return id
     }
 
     @GetMapping(value = ["/{orderId}"])
-    fun findOrder(@PathVariable orderId: String): Order {
-        return cache.getOrDefault(orderId, Order())
+    fun find(@PathVariable orderId: String): Order {
+        return repository.getOrDefault(orderId, Order())
     }
 
     @GetMapping
-    fun hello(): String {
-        return "controller is healthy"
+    fun findAll(): Collection<Order> {
+        validateUserAccess()
+        return repository.values.filter { it.userId == USER_ID }
+    }
+
+    private fun validateUserAccess() {
+        restTemplate.getForObject("http://localhost:8071/users/$USER_ID", User::class.java)
+            ?: throw IllegalArgumentException("User with id $USER_ID doesn't exist")
     }
 }
 
 fun CharRange.random(count: Int): String {
     return (0..count)
         .map { kotlin.random.Random.nextInt(0, this.count()) }
-        .map { this.elementAt(it)}
+        .map { this.elementAt(it) }
         .joinToString("")
 }
 

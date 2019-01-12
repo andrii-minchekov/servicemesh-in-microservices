@@ -1,7 +1,9 @@
 package com.example.orderservice
 
+import com.example.orderservice.OrderController.Companion.DEFAULT_ORDER_ID
 import com.example.orderservice.dto.Order
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,10 +15,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-
 @RunWith(SpringRunner::class)
 @WebMvcTest(OrderController::class)
-class OrderServiceApplicationTests {
+class OrderControllerTest {
 
     @Autowired
     private lateinit var mvc: MockMvc
@@ -24,12 +25,13 @@ class OrderServiceApplicationTests {
     @Test
     fun shouldPerformGetOrders() {
         mvc.perform(
-            get("/orders")
+            get("/orders/$DEFAULT_ORDER_ID")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
     }
 
     @Test
+    @Ignore
     fun shouldCreateOrder() {
         val toCreate = Order(userId = "1")
 

@@ -1,30 +1,29 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
+import kotlin.collections.mutableListOf
 
 
 plugins {
     kotlin("jvm")
-    id("org.springframework.boot") version "2.1.1.RELEASE"
-    id("io.spring.dependency-management") version "1.0.6.RELEASE"
-    id("org.jetbrains.kotlin.plugin.spring") version "1.3.11"
+    id("org.jetbrains.kotlin.plugin.spring")
 }
 
-tasks.named<BootJar>("bootJar") {
-    archiveName = "app.jar"
-    mainClassName = "com.example.orderservice.OrderServiceApplication"
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.named<BootRun>("bootRun") {
-    main = "com.example.orderservice.OrderServiceApplication"
-//    args("--spring.profiles.active=demo")
-}
+tasks {
+    "bootJar"(BootJar::class) {
+        archiveName = "app.jar"
+        mainClassName = "com.example.orderservice.OrderServiceApplication"
+    }
 
-group = "com.example"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
+    "bootRun"(BootRun::class) {
+        main = "com.example.orderservice.OrderServiceApplication"
+//        args("--spring.profiles.active=demo")
+    }
 }
 
 dependencies {
@@ -37,6 +36,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+jib {
+    to {
+        image = "menya84/order-service"
+    }
+    container {
+        ports = mutableListOf("8072")
+    }
 }

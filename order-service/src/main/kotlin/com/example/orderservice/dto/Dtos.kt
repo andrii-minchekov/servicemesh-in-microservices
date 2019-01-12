@@ -8,10 +8,13 @@ abstract class Dto {
     }
 }
 
+
+data class User(var id: String = "1000"): Dto()
+
 data class Order(
-    var userId: String = "DEFAULT_USER_ID",
+    var userId: String = "1000",
     var items: Array<String> = arrayOf("DEFAULT_ITEM1"),
-    var id: String = "DEFAULT_ID"
+    var id: String = "10000"
 ) : Dto() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
