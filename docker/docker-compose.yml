@@ -7,15 +7,48 @@ services:
 
   gateway-mirror:
     image: menya84/gateway-mirror
+    tty: true
+    stdin_open: true
     ports:
-    - "8070:8070"
+      - 9990 # Admin
+      - 4141 # Outgoing
+#    - "8070:8070"
+#    - "9990:9990"
 
   user-service:
     image: menya84/user-service
+    tty: true
+    stdin_open: true
     ports:
-    - "8071:8071"
+      - 4140 # Incoming
+      - 4141 # Outgoing
+      - 9990 # Admin
+#      - "8071:8071"
+#      - "9990:9990"
 
   order-service:
     image: menya84/order-service
+    tty: true
+    stdin_open: true
     ports:
-    - "8072:8072"
+      - 4140 # Incoming
+      - 4141 # Outgoing
+      - 9990 # Admin
+#      - "8072:8072"
+#      - "9990:9990"
+
+  consul-server:
+    tty: true
+    image: gliderlabs/consul-server
+    stdin_open: true
+    net: "host"
+    command: ["-bootstrap", "-advertise=172.17.0.1"]
+
+  consul-registrator:
+    tty: true
+    image: gliderlabs/registrator
+    stdin_open: true
+    net: "host"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: ["consul://localhost:8500"]
