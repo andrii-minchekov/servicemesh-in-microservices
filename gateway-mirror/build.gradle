@@ -47,6 +47,9 @@ dependencyManagement {
 }
 
 jib {
+    from {
+        image = "gcr.io/distroless/java:debug"
+    }
     to {
         image = 'menya84/gateway-mirror'
         auth {

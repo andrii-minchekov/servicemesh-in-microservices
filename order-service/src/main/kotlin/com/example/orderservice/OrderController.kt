@@ -42,7 +42,7 @@ class OrderController(@Autowired val restTemplate: RestTemplate) {
     }
 
     private fun validateUserAccess() {
-        restTemplate.getForObject("http://localhost:8071/users/$USER_ID", User::class.java)
+        restTemplate.getForObject("http://user-service/users/$USER_ID", User::class.java)
             ?: throw IllegalArgumentException("User with id $USER_ID doesn't exist")
     }
 }

@@ -37,6 +37,9 @@ dependencies {
 }
 
 jib {
+    from {
+        image = "gcr.io/distroless/java:debug"
+    }
     to {
         image = "menya84/order-service"
     }

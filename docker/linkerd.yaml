@@ -1,0 +1,103 @@
+admin:
+  ip: 0.0.0.0
+  port: 9990
+
+namers:
+- kind: io.l5d.consul
+  experimental: true
+  host: consul-server
+  port: 8500
+  includeTag: false
+  setHost: false
+
+routers:
+
+# Use this router for linkerd-to-service
+# This server should be registered in service discovery so that incoming traffic
+# is served here.
+#- protocol: http
+#  label: incoming
+#  servers:
+#  - port: 4140
+#    ip: 0.0.0.0
+#  # Route all incoming traffic to the application service
+#  # (assumed to be running on port 80)
+#  dtab: |
+#    /local => /$/inet/127.1/80;
+#    /http/1.1/*/* => /local ;
+
+# Use this router for service-to-linkerd
+# The matching service instance should send all outgoing traffic to port 4141
+# so that linkerd may route it appropriately.
+  #GATEWAY
+- protocol: http
+  label: outgoing
+  servers:
+  - port: 3141
+    ip: 0.0.0.0
+  # Route outgoing traffic based on the Host header
+  dtab: |
+    /http/1.1/* => /#/io.l5d.consul/dc1;
+
+
+
+  # Use this router for linkerd-to-service
+# This server should be registered in service discovery so that incoming traffic
+# is served here.
+#ORDER-SERVICE
+- protocol: http
+  label: incoming-ORDER-SERVICE
+  identifier:
+    kind: io.l5d.methodAndHost
+  servers:
+  - port: 4140
+    ip: 0.0.0.0
+  # Route all incoming traffic to the application service
+  # (assumed to be running on port 80)
+  dtab: |
+    /local => /#/io.l5d.consul/dc1;
+    /http/1.1/* => /local ;
+
+  # Use this router for service-to-linkerd
+# The matching service instance should send all outgoing traffic to port 4141
+# so that linkerd may route it appropriately.
+- protocol: http
+  label: outgoing-ORDER-SERVICE
+  identifier:
+    kind: io.l5d.methodAndHost
+#    httpUriInDst: true
+  servers:
+  - port: 4141
+    ip: 0.0.0.0
+  # Route outgoing traffic based on the Host header
+  dtab: |
+    /http/1.1/* => /#/io.l5d.consul/dc1;
+
+
+
+  # Use this router for linkerd-to-service
+# This server should be registered in service discovery so that incoming traffic
+# is served here.
+#USER-SERVICE
+- protocol: http
+  label: incoming-USER-SERVICE
+  servers:
+  - port: 5140
+    ip: 0.0.0.0
+  # Route all incoming traffic to the application service
+  # (assumed to be running on port 80)
+  dtab: |
+    /local => /$/inet/127.1/80;
+    /http/1.1/*/* => /local ;
+
+  # Use this router for service-to-linkerd
+# The matching service instance should send all outgoing traffic to port 4141
+# so that linkerd may route it appropriately.
+- protocol: http
+  label: outgoing-USER-SERVICE
+  servers:
+  - port: 5141
+    ip: 0.0.0.0
+  # Route outgoing traffic based on the Host header
+  dtab: |
+    /http/1.1/* => /#/io.l5d.consul/dc1;

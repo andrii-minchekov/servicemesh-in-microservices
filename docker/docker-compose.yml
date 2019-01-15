@@ -1,54 +1,67 @@
 version: '3'
 services:
-#  consul:
-#    image: "consul:0.8.0"
-#    ports:
-#    - "8500:8500"
+  #  consul:
+  #    image: "consul:0.8.0"
+  #    ports:
+  #    - "8500:8500"
 
   gateway-mirror:
     image: menya84/gateway-mirror
     tty: true
     stdin_open: true
     ports:
-      - 9990 # Admin
-      - 4141 # Outgoing
-#    - "8070:8070"
-#    - "9990:9990"
+    #      - 9990 # Admin
+    #      - 4141:4141 # Outgoing
+    - "8070:8070"
+  #    - "9990:9990"
 
   user-service:
     image: menya84/user-service
     tty: true
     stdin_open: true
     ports:
-      - 4140 # Incoming
-      - 4141 # Outgoing
-      - 9990 # Admin
-#      - "8071:8071"
-#      - "9990:9990"
+  #      - 4140:4140 # Incoming
+  #      - 4141:4140 # Outgoing
+  #      - 9990 # Admin
+        - "8071:8071"
+  #      - "9990:9990"
 
   order-service:
     image: menya84/order-service
     tty: true
     stdin_open: true
+    environment:
+    - http.proxyHost=linkerd
+    - http.proxyPort=4140
     ports:
-      - 4140 # Incoming
-      - 4141 # Outgoing
-      - 9990 # Admin
-#      - "8072:8072"
-#      - "9990:9990"
+    #      - 4140:4140 # Incoming
+    #      - 4141:4141 # Outgoing
+    #      - 9990 # Admin
+    - "8072:8072"
+  #      - "9990:9990"
 
   consul-server:
-    tty: true
     image: gliderlabs/consul-server
-    stdin_open: true
-    net: "host"
-    command: ["-bootstrap", "-advertise=172.17.0.1"]
+    command: ["-bootstrap"]
+    ports:
+    - "8500:8500"
 
   consul-registrator:
-    tty: true
     image: gliderlabs/registrator
-    stdin_open: true
-    net: "host"
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock
-    command: ["consul://localhost:8500"]
+    - /var/run/docker.sock:/tmp/docker.sock
+    command: ["consul://consul-server:8500"]
+    depends_on:
+      - consul-server
+
+  linkerd:
+    image: buoyantio/linkerd:1.6.0
+    ports:
+    - "4140:4140"
+    - "4141:4141"
+    - "9990:9990"
+    # we must mount the config file and the disco directory
+    volumes:
+    - ./linkerd.yaml:/io.buoyant/linkerd.yaml:ro
+    command: >
+      /io.buoyant/linkerd.yaml
