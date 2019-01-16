@@ -4,12 +4,16 @@ buildscript {
         springBootVersion = '2.1.1.RELEASE'
     }
     repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath('com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin:0.9.11')
     }
 }
 
@@ -17,6 +21,7 @@ apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: "com.google.cloud.tools.jib"
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -71,5 +76,7 @@ jib {
     }
     container {
         ports = ['8071']
+        def debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5557"
+        jvmFlags = ["-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141"]
     }
 }

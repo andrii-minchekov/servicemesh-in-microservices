@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.StandardFileSystems.jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
@@ -17,11 +18,11 @@ java {
 tasks {
     "bootJar"(BootJar::class) {
         archiveName = "app.jar"
-        mainClassName = "com.example.orderservice.OrderServiceApplication"
+        mainClassName = "com.example.orderservice.OrderServiceApplicationKt"
     }
 
     "bootRun"(BootRun::class) {
-        main = "com.example.orderservice.OrderServiceApplication"
+        main = "com.example.orderservice.OrderServiceApplicationKt"
 //        args("--spring.profiles.active=demo")
     }
 }
@@ -43,6 +44,7 @@ jib {
     to {
         image = "menya84/order-service"
     }
+    val debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5556"
     container {
         ports = mutableListOf("8072")
         jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
