@@ -9,16 +9,21 @@ object UserController {
     const val DEFAULT_ID = "1000"
     private val repository: MutableMap<String, User> = mutableMapOf(DEFAULT_ID to User())
 
-    @RequestMapping(method = [RequestMethod.POST])
+    @PostMapping
     fun add(@RequestBody user: User): String {
         val id = ('a'..'z').random(16)
         repository[id] = user.copy(id = id)
         return id
     }
 
-    @RequestMapping(value = ["/{userId}"])
+    @GetMapping(value = ["/{userId}"])
     fun find(@PathVariable userId: String): User {
         return repository.getOrDefault(userId, User())
+    }
+
+    @GetMapping
+    fun findAll(): Collection<User> {
+        return repository.values
     }
 }
 
