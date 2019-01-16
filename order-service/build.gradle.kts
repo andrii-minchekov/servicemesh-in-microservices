@@ -45,5 +45,6 @@ jib {
     }
     container {
         ports = mutableListOf("8072")
+        jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
     }
 }

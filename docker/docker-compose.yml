@@ -30,9 +30,6 @@ services:
     image: menya84/order-service
     tty: true
     stdin_open: true
-    environment:
-    - http.proxyHost=linkerd
-    - http.proxyPort=4140
     ports:
     #      - 4140:4140 # Incoming
     #      - 4141:4141 # Outgoing
