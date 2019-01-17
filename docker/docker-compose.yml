@@ -1,7 +1,7 @@
 version: '3'
 services:
   gateway-mirror:
-    image: menya84/gateway-mirror
+    image: "$dockerRepository/gateway-mirror"
     tty: true
     stdin_open: true
     ports:
@@ -11,7 +11,7 @@ services:
     - consul-registrator
 
   user-service:
-    image: menya84/user-service
+    image: "$dockerRepository/user-service"
     tty: true
     stdin_open: true
     ports:
@@ -21,7 +21,7 @@ services:
     - consul-registrator
 
   order-service:
-    image: menya84/order-service
+    image: "$dockerRepository/order-service"
     tty: true
     stdin_open: true
     ports:

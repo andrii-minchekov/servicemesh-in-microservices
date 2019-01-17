@@ -1,4 +1,4 @@
-FROM menya84/gateway-mirror
+FROM ${dockerRepository}/gateway-mirror
 #RUN ln -s `which sh` /bin/sh
 
 # Copy src files to non public dir

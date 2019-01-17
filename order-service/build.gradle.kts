@@ -37,12 +37,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
+val dockerRepository: String by project
+
 jib {
     from {
         image = "gcr.io/distroless/java:debug"
     }
     to {
-        image = "menya84/order-service"
+        image = "$dockerRepository/order-service"
     }
     val debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5556"
     container {
