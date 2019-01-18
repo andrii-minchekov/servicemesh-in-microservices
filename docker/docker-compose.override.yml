@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v1.1.1
+    volumes:
+      - ./prometheus.yml:/prometheus/prometheus.yml:ro
+    command: >
+      -config.file=/prometheus/prometheus.yml
+      -storage.local.retention=12h
+    ports:
+      - 9090:9090
+
+  grafana:
+    build:
+      context: .
+      dockerfile: Dockerfile-grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+
+#  slow-cooker:
+#    image: buoyantio/slow_cooker:1.2.0
+#    entrypoint: /bin/sh
+#    command: >
+#      -c 'sleep 15 && slow_cooker -qps 20 -concurrency 15 -interval 5s -totalRequests 10000000 http://linkerd:4140/'

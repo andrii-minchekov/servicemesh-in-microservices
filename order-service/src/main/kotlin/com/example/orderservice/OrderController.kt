@@ -1,6 +1,8 @@
 package com.example.orderservice
 
+import com.example.orderservice.dto.ClientException
 import com.example.orderservice.dto.Order
+import com.example.orderservice.dto.ServerException
 import com.example.orderservice.dto.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -40,6 +42,29 @@ class OrderController(@Autowired val restTemplate: RestTemplate) {
         validateUserAccess()
         return repository.values.filter { it.userId == USER_ID }
     }
+
+    private var serverFailures: Int = 0
+    private var clientFailures: Int = 0
+
+    @GetMapping(value = ["/server"])
+    fun findAllFailureAcccrualServer(): Collection<Order> {
+        if (serverFailures == 3) {
+            throw ServerException("500 error")
+        }
+        serverFailures++
+        return repository.values.filter { it.userId == USER_ID }
+    }
+
+
+    @GetMapping(value = ["/client"])
+    fun findAllFailureAcccrualClient(): Collection<Order> {
+        if (clientFailures == 3) {
+            throw ClientException("500 error")
+        }
+        clientFailures++
+        return repository.values.filter { it.userId == USER_ID }
+    }
+
 
     private fun validateUserAccess() {
         restTemplate.getForObject("http://user-service/users/$USER_ID", User::class.java)
