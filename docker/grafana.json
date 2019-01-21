@@ -290,7 +290,7 @@
       "height": "250px",
       "panels": [
         {
-          "content": "```yaml\n- protocol: http\n  client:\n    failureAccrual:\n      kind: io.l5d.consecutiveFailures\n      failures: 5\n      backoff:\n        kind: constant\n        ms: 10000\n```",
+          "content": "```yaml\n- protocol: http\n  client:\n    failureAccrual:\n      kind: io.l5d.consecutiveFailures\n      failures: 3\n      backoff:\n        kind: constant\n        ms: 10000\n```",
           "editable": true,
           "error": false,
           "id": 18,

@@ -3,12 +3,12 @@ version: '3.3'
 services:
 
   prometheus:
-    image: prom/prometheus:v1.1.1
+    image: prom/prometheus
     volumes:
       - ./prometheus.yml:/prometheus/prometheus.yml:ro
     command: >
-      -config.file=/prometheus/prometheus.yml
-      -storage.local.retention=12h
+      --config.file=/prometheus/prometheus.yml
+#      --storage.local.retention=12h
     ports:
       - 9090:9090
 
@@ -27,3 +27,10 @@ services:
 #    entrypoint: /bin/sh
 #    command: >
 #      -c 'sleep 15 && slow_cooker -qps 20 -concurrency 15 -interval 5s -totalRequests 10000000 http://linkerd:4140/'
+
+
+#  linkerd-viz:
+#    image: buoyantio/linkerd-viz
+#    ports:
+#      - 3000:3000
+#      - 9191:9191
