@@ -33,14 +33,18 @@ repositories {
 
 ext {
     set('springBootAdminVersion', '2.1.1')
+    set('springCloudVersion', 'Greenwich.RC2')
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-    implementation 'de.codecentric:spring-boot-admin-starter-client'
-    implementation 'de.codecentric:spring-boot-admin-starter-server'
+//    implementation 'de.codecentric:spring-boot-admin-starter-client'
+//    implementation 'de.codecentric:spring-boot-admin-starter-server'
+
+    implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
+    
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")

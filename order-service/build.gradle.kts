@@ -4,7 +4,6 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 import kotlin.collections.mutableListOf
 
-
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.spring")
@@ -33,6 +32,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
+
+    implementation("org.hobsoft.spring:spring-rest-template-logger:2.0.0")
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -2,6 +2,9 @@ admin:
   ip: 0.0.0.0
   port: 9990
 
+usage:
+  enabled: false
+
 telemetry:
   - kind: io.l5d.zipkin
     host: zipkin
@@ -74,20 +77,30 @@ routers:
   # so that linkerd may route it appropriately.
   - protocol: http
     label: linkerd-router
+    httpAccessLog: access.log
+    httpAccessLogRollPolicy: daily
+    httpAccessLogAppend: true
+    httpAccessLogRotateCount: -1
     identifier:
       kind: io.l5d.methodAndHost
     #    httpUriInDst: true
+    tracePropagator:
+      kind: io.l5d.zipkin
+    dstPrefix: /http
     servers:
       - port: 4141
         ip: 0.0.0.0
     # Route outgoing traffic based on the Host header
     dtab: |
-      /svc/1.1/* => /#/io.l5d.consul/dc1;
+      /srv         => /io.l5d.fs ;
+      /srv => /#/io.l5d.consul/dc1;
+      /host        => /srv ;
+      /http/1.1/*  => /host ;
     service:
       retries:
         budget:
           minRetriesPerSec: 5
-          percentCanRetry: 0.5
+          percentCanRetry: 1
           ttlSecs: 15
         backoff:
           kind: jittered
