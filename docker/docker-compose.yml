@@ -55,9 +55,10 @@ services:
     - "9990:9990"
     # we must mount the config file and the disco directory
     volumes:
-    - ./linkerd.yaml:/io.buoyant/linkerd.yaml:ro
+    - ./linkerd/linkerd.yaml:/io.buoyant/linkerd.yaml:ro
+    - ./linkerd/disco:/disco
     command: >
-      /io.buoyant/linkerd.yaml -log.level=DEBUG
+      /io.buoyant/linkerd.yaml -log.level=DEBUG -com.twitter.finagle.tracing.enabled=true
 
   zipkin:
     image: openzipkin/zipkin

@@ -17,6 +17,8 @@ telemetry:
 
 
 namers:
+  - kind: io.l5d.fs
+    rootDir: /disco
   - kind: io.l5d.consul
     experimental: true
     host: consul-server
@@ -76,7 +78,7 @@ routers:
   # The matching service instance should send all outgoing traffic to port 4141
   # so that linkerd may route it appropriately.
   - protocol: http
-    label: linkerd-router
+    label: outgoing-router
     httpAccessLog: access.log
     httpAccessLogRollPolicy: daily
     httpAccessLogAppend: true
@@ -90,10 +92,9 @@ routers:
     servers:
       - port: 4141
         ip: 0.0.0.0
-    # Route outgoing traffic based on the Host header
+    # Route outgoing traffic based on the Host header  #      /srv => /#/io.l5d.consul/dc1;
     dtab: |
-      /srv         => /io.l5d.fs ;
-      /srv => /#/io.l5d.consul/dc1;
+      /srv         => /$/inet/127.1/4140 ;
       /host        => /srv ;
       /http/1.1/*  => /host ;
     service:
@@ -108,6 +109,35 @@ routers:
           maxMs: 10000
       responseClassifier:
         kind: io.l5d.http.nonRetryable5XX
+    client:
+      failureAccrual:
+        kind: io.l5d.consecutiveFailures
+        failures: 3
+        backoff:
+          kind: constant
+          ms: 10000
+
+  - protocol: http
+    label: incoming-router
+    httpAccessLog: access.log
+    httpAccessLogRollPolicy: daily
+    httpAccessLogAppend: true
+    httpAccessLogRotateCount: -1
+    identifier:
+      kind: io.l5d.methodAndHost
+    #    httpUriInDst: true
+    tracePropagator:
+      kind: io.l5d.zipkin
+    dstPrefix: /http
+    servers:
+      - port: 4140
+        ip: 0.0.0.0
+    # Route outgoing traffic based on the Host header
+    dtab: |
+      /srv         => /io.l5d.fs ;
+      /srv => /#/io.l5d.consul/dc1;
+      /host        => /srv ;
+      /http/1.1/*  => /host ;
     client:
       failureAccrual:
         kind: io.l5d.consecutiveFailures
