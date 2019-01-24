@@ -11,7 +11,7 @@ telemetry:
     port: 9410
     sampleRate: 1.0
 
-  - kind: io.l5d.prometheus
+#  - kind: io.l5d.prometheus
   - kind: io.l5d.recentRequests
     sampleRate: 1
 
@@ -90,11 +90,12 @@ routers:
       kind: io.l5d.zipkin
     dstPrefix: /http
     servers:
-      - port: 4141
+      - port: 4140
         ip: 0.0.0.0
     # Route outgoing traffic based on the Host header  #      /srv => /#/io.l5d.consul/dc1;
     dtab: |
       /srv         => /$/inet/127.1/4140 ;
+      /srv => /#/io.l5d.consul/dc1;
       /host        => /srv ;
       /http/1.1/*  => /host ;
     service:
@@ -130,7 +131,7 @@ routers:
       kind: io.l5d.zipkin
     dstPrefix: /http
     servers:
-      - port: 4140
+      - port: 4141
         ip: 0.0.0.0
     # Route outgoing traffic based on the Host header
     dtab: |
@@ -138,13 +139,28 @@ routers:
       /srv => /#/io.l5d.consul/dc1;
       /host        => /srv ;
       /http/1.1/*  => /host ;
-    client:
-      failureAccrual:
-        kind: io.l5d.consecutiveFailures
-        failures: 3
+    service:
+      retries:
+        budget:
+          minRetriesPerSec: 5
+          percentCanRetry: 100
+          ttlSecs: 15
         backoff:
-          kind: constant
-          ms: 10000
+          kind: jittered
+          minMs: 10
+          maxMs: 10000
+      responseClassifier:
+        kind: io.l5d.http.nonRetryable5XX
+#    client:
+#      kind: io.l5d.global
+#      loadBalancer:
+#        kind: roundRobin
+#      failureAccrual:
+#        kind: io.l5d.consecutiveFailures
+#        failures: 3
+#        backoff:
+#          kind: constant
+#          ms: 100000
 
 
 

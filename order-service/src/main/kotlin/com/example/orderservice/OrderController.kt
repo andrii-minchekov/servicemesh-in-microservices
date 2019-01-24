@@ -1,14 +1,13 @@
 package com.example.orderservice
 
-import com.example.orderservice.dto.ClientException
 import com.example.orderservice.dto.Order
-import com.example.orderservice.dto.ServerException
 import com.example.orderservice.dto.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping(
@@ -49,7 +48,7 @@ class OrderController(@Autowired val restTemplate: RestTemplate) {
     @GetMapping(value = ["/server"])
     fun findAllFailureAcccrualServer(): Collection<Order> {
         if (serverFailures == 3) {
-            throw ServerException("500 error")
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "500 error")
         }
         serverFailures++
         return repository.values.filter { it.userId == USER_ID }
@@ -59,7 +58,7 @@ class OrderController(@Autowired val restTemplate: RestTemplate) {
     @GetMapping(value = ["/client"])
     fun findAllFailureAcccrualClient(): Collection<Order> {
         if (clientFailures == 3) {
-            throw ClientException("500 error")
+            throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "400 error")
         }
         clientFailures++
         return repository.values.filter { it.userId == USER_ID }

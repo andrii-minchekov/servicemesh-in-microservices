@@ -25,7 +25,7 @@ class OrderServiceApplication {
         filter.setIncludePayload(false)
         filter.setMaxPayloadLength(10000)
         filter.setIncludeHeaders(true)
-        filter.setAfterMessagePrefix("REQUEST DATA : ")
+        filter.setBeforeMessagePrefix("REQUEST DATA : ")
         return filter
     }
 }

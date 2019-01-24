@@ -5,28 +5,28 @@ services:
     tty: true
     stdin_open: true
     ports:
-    - "8070:8070"
-    - "5555:5555"
+      - "8070:8070"
+      - "5555:5555"
     depends_on:
-    - consul-registrator
+      - consul-registrator
 
   user-service:
     image: "$dockerRepository/user-service"
     tty: true
     stdin_open: true
     ports:
-    - "8071:8071"
-#    - "5557:5557"
+      - "8071:8071"
+    #    - "5557:5557"
     depends_on:
-    - consul-registrator
+      - consul-registrator
 
   order-service:
     image: "$dockerRepository/order-service"
     tty: true
     stdin_open: true
     ports:
-    - "8072:8072"
-#    - "5556:5556"
+      - "8072-8073:8072"
+    #    - "5556:5556"
     depends_on:
       - consul-registrator
 
@@ -34,29 +34,29 @@ services:
     image: gliderlabs/consul-server
     command: ["-bootstrap"]
     ports:
-    - "8500:8500"
+      - "8500:8500"
 
   consul-registrator:
     image: gliderlabs/registrator
     volumes:
-    - /var/run/docker.sock:/tmp/docker.sock
-    command: ["consul://consul-server:8500"]
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: ["-internal=true","consul://consul-server:8500"]
     depends_on:
-    - consul-server
+      - consul-server
 
   linkerd:
     image: buoyantio/linkerd:1.6.0
     ports:
-    - "3141:3141"
-    - "4140:4140"
-    - "4141:4141"
-    - "5140:5140"
-    - "5141:5141"
-    - "9990:9990"
+      - "3141:3141"
+      - "4140:4140"
+      - "4141:4141"
+      - "5140:5140"
+      - "5141:5141"
+      - "9990:9990"
     # we must mount the config file and the disco directory
     volumes:
-    - ./linkerd/linkerd.yaml:/io.buoyant/linkerd.yaml:ro
-    - ./linkerd/disco:/disco
+      - ./linkerd/linkerd.yaml:/io.buoyant/linkerd.yaml:ro
+      - ./linkerd/disco:/disco
     command: >
       /io.buoyant/linkerd.yaml -log.level=DEBUG -com.twitter.finagle.tracing.enabled=true
 
@@ -65,17 +65,17 @@ services:
     container_name: zipkin
     # Environment settings are defined here https://github.com/openzipkin/zipkin/tree/1.19.0/zipkin-server#environment-variables
     environment:
-    # - STORAGE_TYPE=mysql
-    # Point the zipkin at the storage backend
-    #- MYSQL_HOST=mysql
-    # Uncomment to enable scribe
-    - SCRIBE_ENABLED=true
-    # Uncomment to enable self-tracing
-    # - SELF_TRACING_ENABLED=true
-    # Uncomment to enable debug logging
-    - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG
+      # - STORAGE_TYPE=mysql
+      # Point the zipkin at the storage backend
+      #- MYSQL_HOST=mysql
+      # Uncomment to enable scribe
+      - SCRIBE_ENABLED=true
+      # Uncomment to enable self-tracing
+      # - SELF_TRACING_ENABLED=true
+      # Uncomment to enable debug logging
+      - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG
     ports:
-    # Port used for the Zipkin UI and HTTP Api
-    - 9411:9411
-    # Uncomment if you set SCRIBE_ENABLED=true
-    - 9410:9410
+      # Port used for the Zipkin UI and HTTP Api
+      - 9411:9411
+      # Uncomment if you set SCRIBE_ENABLED=true
+      - 9410:9410
