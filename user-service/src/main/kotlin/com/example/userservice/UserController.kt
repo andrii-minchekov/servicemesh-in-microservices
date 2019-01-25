@@ -1,7 +1,9 @@
 package com.example.userservice
 
 import com.example.userservice.UserController.DEFAULT_ID
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/users")
@@ -24,6 +26,11 @@ object UserController {
     @GetMapping
     fun findAll(): Collection<User> {
         return repository.values
+    }
+
+    @GetMapping("/server")
+    fun findAllThrowsServerError(): Collection<User> {
+        throw ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Service is down")
     }
 }
 

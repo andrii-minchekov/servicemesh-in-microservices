@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -50,7 +50,7 @@ public class MirrorController {
 
         try {
             proxyResponse = restTemplate.exchange(uri, method, httpEntity, byte[].class);
-        } catch (HttpServerErrorException e) {
+        } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getRawStatusCode())
                     .headers(e.getResponseHeaders())
                     .body(e.getResponseBodyAsByteArray());

@@ -58,7 +58,7 @@ class OrderController(@Autowired val restTemplate: RestTemplate) {
     @GetMapping(value = ["/client"])
     fun findAllFailureAcccrualClient(): Collection<Order> {
         if (clientFailures == 3) {
-            throw throw ResponseStatusException(HttpStatus.BAD_REQUEST, "400 error")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "400 error")
         }
         clientFailures++
         return repository.values.filter { it.userId == USER_ID }
