@@ -1,7 +1,7 @@
 version: '3.3'
 services:
-  gateway-mirror:
-    image: "$dockerRepository/gateway-mirror"
+  api-gateway:
+    image: "$dockerRepository/api-gateway"
     tty: true
     stdin_open: true
     ports:
@@ -15,7 +15,7 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "8071:8071"
+      - "9071-9072:8071"
     #    - "5557:5557"
     depends_on:
       - consul-registrator
@@ -25,7 +25,7 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "8072-8073:8072"
+      - "9073-9074:8072"
     #    - "5556:5556"
     depends_on:
       - consul-registrator

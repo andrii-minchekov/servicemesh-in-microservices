@@ -1,6 +1,6 @@
 rootProject.name = "microservices"
 
-include("gateway-mirror")
+include("api-gateway")
 include("user-service")
 include("order-service")
 

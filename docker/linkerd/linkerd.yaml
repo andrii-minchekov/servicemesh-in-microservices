@@ -15,7 +15,6 @@ telemetry:
 - kind: io.l5d.recentRequests
   sampleRate: 1
 
-
 namers:
 - kind: io.l5d.fs
   rootDir: /disco
@@ -28,6 +27,12 @@ namers:
 
 routers:
 - protocol: http
+#  announcers:
+#  - kind: io.l5d.serversets
+#    zkAddrs:
+#    - host: zookeeper
+#      port: 2181
+#    pathPrefix: /discovery/prod
   label: incoming-router
   httpAccessLog: access.log
   httpAccessLogRollPolicy: daily
@@ -42,6 +47,9 @@ routers:
   servers:
   - port: 4141
     ip: 0.0.0.0
+#    announce:
+#    - /#/io.l5d.serversets/user-service
+#    - /#/io.l5d.serversets/order-service
   # Route outgoing traffic based on the Host header
   dtab: |
     /srv         => /io.l5d.fs ;
@@ -52,6 +60,10 @@ routers:
     kind: io.l5d.static
     configs:
     - prefix: /http/1.1/GET
+      # The timeout for a single request attempt on the dog client.  If this
+      # timeout is reached, the request attempt will be canceled and the request
+      # will be retried if there is still time remaining in the total timeout.
+      requestAttemptTimeoutMs: 100
       totalTimeoutMs: 10000
       responseClassifier:
         kind: io.l5d.http.retryableRead5XX
@@ -66,8 +78,8 @@ routers:
       totalTimeoutMs: 4000
       retries:
         budget:
-          minRetriesPerSec: 1
-        #          percentCanRetry: 2.0
+          minRetriesPerSec: 0
+          percentCanRetry: 2.0
         #          ttlSecs: 15
       #        backoff:
       #          kind: jittered
@@ -85,6 +97,10 @@ routers:
     kind: io.l5d.static
     configs:
     - prefix: /#/io.l5d.consul/dc1
+      # The timeout for a single request attempt on the dog client.  If this
+      # timeout is reached, the request attempt will be canceled and the request
+      # will be retried if there is still time remaining in the total timeout.
+      requestAttemptTimeoutMs: 100
       loadBalancer:
         kind: roundRobin
       failureAccrual:

@@ -1,0 +1,52 @@
+version: '3.3'
+
+services:
+    prometheus:
+      image: prom/prometheus
+      volumes:
+        - ./prometheus.yml:/prometheus/prometheus.yml:ro
+      command: >
+        --config.file=/prometheus/prometheus.yml
+  #      --storage.local.retention=12h
+      ports:
+        - 9090:9090
+
+    grafana:
+      build:
+        context: .
+        dockerfile: Dockerfile-grafana
+      ports:
+        - 3000:3000
+      volumes:
+      - ./graphana:/graphana
+      environment:
+        - GF_AUTH_ANONYMOUS_ENABLED=true
+        - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+
+  #  slow-cooker:
+  #    image: buoyantio/slow_cooker:1.2.0
+  #    entrypoint: /bin/sh
+  #    command: >
+  #      -c 'sleep 15 && slow_cooker -qps 20 -concurrency 15 -interval 5s -totalRequests 10000000 http://linkerd:4140/'
+
+
+  #  linkerd-viz:
+  #    image: buoyantio/linkerd-viz
+  #    ports:
+  #      - 3000:3000
+  #      - 9191:9191
+
+#  zookeeper:
+#    image: zookeeper
+#    ports:
+#    - 2181:2181
+#
+#  zookeeper-ui:
+#    image: tobilg/zookeeper-webui
+#    environment:
+#    - ZK_DEFAULT_NODE=zookeeper:2181/
+#    - USER=admin
+#    - PASSWORD=admin
+#    ports:
+#    - 8081:8080
+
