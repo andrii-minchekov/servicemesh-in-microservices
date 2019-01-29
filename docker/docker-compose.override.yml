@@ -4,7 +4,7 @@ services:
     prometheus:
       image: prom/prometheus
       volumes:
-        - ./prometheus.yml:/prometheus/prometheus.yml:ro
+        - ./prometheus/prometheus.yml:/prometheus/prometheus.yml:ro
       command: >
         --config.file=/prometheus/prometheus.yml
   #      --storage.local.retention=12h
@@ -14,7 +14,7 @@ services:
     grafana:
       build:
         context: .
-        dockerfile: Dockerfile-grafana
+        dockerfile: grafana/Dockerfile-grafana
       ports:
         - 3000:3000
       volumes:
