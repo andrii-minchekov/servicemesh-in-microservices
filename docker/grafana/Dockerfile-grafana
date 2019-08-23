@@ -1,10 +1,15 @@
 FROM grafana/grafana
+
+ENV GF_AUTH_ANONYMOUS_ENABLED=true
+ENV GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
 USER root
 RUN apt-get update && \
     apt-get -y --no-install-recommends install curl
 
 RUN mkdir -p /var/lib/grafana/dashboards
-COPY ./grafana/grafana.json /usr/share/grafana/public/dashboards/home.json
 
-COPY ./grafana/bootstrap.sh /
+COPY grafana/linkerd-health-dashboard.json /usr/share/grafana/public/dashboards/linkerd-health-dashboard.json
+COPY grafana/linkerd-viz-dashboard.json /usr/share/grafana/public/dashboards/linkerd-viz-dashboard.json
+
+COPY grafana/bootstrap.sh /
 ENTRYPOINT ["/bootstrap.sh"]

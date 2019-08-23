@@ -1,3 +1,4 @@
+#Example of Microservice Architecture with Spring Boot, Microservice Architecture with Service Mesh, Service Mesh example Java/Kotlin, Service Mesh POC, Linkerd example Java/Kotlin, Linkerd Docker example
 version: '3.3'
 services:
   api-gateway:
@@ -29,6 +30,18 @@ services:
     #    - "5556:5556"
     depends_on:
       - consul-registrator
+
+  order-service-v2:
+    image: "$dockerRepository/order-service"
+    tty: true
+    environment:
+      - SERVICE_NAME=order-service-v2
+    stdin_open: true
+    ports:
+    - "9075:8072"
+    #    - "5556:5556"
+    depends_on:
+    - consul-registrator
 
   consul-server:
     image: gliderlabs/consul-server

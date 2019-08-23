@@ -32,8 +32,15 @@ fun main(args: Array<String>) {
 
 class CustomRequestLoggingFilter : CommonsRequestLoggingFilter() {
 
+    companion object {
+        const val BEFORE = "REQUEST STARTED : "
+        const val AFTER = "REQUEST FINISHED."
+        const val PROMETHEUS = "uri=/actuator/prometheus"
+    }
+
     init {
-        super.setBeforeMessagePrefix("REQUEST STARTED : ")
+        super.setBeforeMessagePrefix(BEFORE)
+        super.setAfterMessagePrefix(AFTER)
     }
 
     override fun isIncludeHeaders(): Boolean {
@@ -44,8 +51,16 @@ class CustomRequestLoggingFilter : CommonsRequestLoggingFilter() {
         return true
     }
 
+    override fun beforeRequest(request: HttpServletRequest, message: String) {
+        if (!message.startsWith("$BEFORE$PROMETHEUS")) {
+            super.beforeRequest(request, message)
+        }
+    }
+
     override fun afterRequest(request: HttpServletRequest, message: String) {
-        super.afterRequest(request,"REQUEST FINISHED")
+        if (!message.startsWith("$AFTER$PROMETHEUS")) {
+            super.afterRequest(request, AFTER)
+        }
     }
 }
 

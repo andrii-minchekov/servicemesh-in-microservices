@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.com.intellij.openapi.vfs.StandardFileSystems.jar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
-import kotlin.collections.mutableListOf
 
 plugins {
     kotlin("jvm")
@@ -49,6 +46,7 @@ jib {
     }
     to {
         image = "$dockerRepository/order-service"
+        credHelper = "docker-credential-osxkeychain"
     }
     val debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5556"
     container {

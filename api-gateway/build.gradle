@@ -56,10 +56,7 @@ jib {
     }
     to {
         image = "$dockerRepository/api-gateway"
-        auth {
-            username = 'setup'
-            password = 'setup'.trim()
-        }
+        credHelper = "docker-credential-osxkeychain"
     }
     container {
         ports = ["8070"]

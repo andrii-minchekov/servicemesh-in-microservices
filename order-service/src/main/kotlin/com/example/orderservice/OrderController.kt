@@ -2,6 +2,7 @@ package com.example.orderservice
 
 import com.example.orderservice.dto.Order
 import com.example.orderservice.dto.User
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -16,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException
 )
 class OrderController(@Autowired val restTemplate: RestTemplate) {
 
+    val log = LoggerFactory.getLogger(OrderController::class.java)
+
     companion object {
         const val DEFAULT_ORDER_ID = "10000"
         const val USER_ID = "1000"
@@ -29,6 +32,16 @@ class OrderController(@Autowired val restTemplate: RestTemplate) {
         val id = ('a'..'z').random(16)
         repository[id] = order.copy(id = id)
         return id
+    }
+
+    @PostMapping(value = ["/ids"], consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ResponseStatus(HttpStatus.CREATED)
+    fun registerIds(@RequestBody ids: Array<Int>): Boolean {
+        ids.forEach {
+            repository[it.toString()] = Order(id = it.toString())
+        }
+        log.info("Registered ${ids.size} ids")
+        return true
     }
 
     @GetMapping(value = ["/{orderId}"])

@@ -78,6 +78,7 @@ jib {
     }
     to {
         image = "${dockerRepository}/user-service"
+        credHelper = "docker-credential-osxkeychain"
     }
     container {
         ports = ['8071']
