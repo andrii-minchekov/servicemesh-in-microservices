@@ -1,9 +1,9 @@
-package com.example.orderservice
+package com.example.orderservice.rest
 
-import com.example.orderservice.dto.Order
-import com.example.orderservice.dto.User
+import com.example.orderservice.domain.order.OrderUseCasesApi
+import com.example.orderservice.rest.dto.Order
+import com.example.orderservice.rest.dto.User
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
@@ -15,7 +15,8 @@ import org.springframework.web.server.ResponseStatusException
     "/orders",
     produces = [MediaType.APPLICATION_JSON_UTF8_VALUE]
 )
-class OrderController(@Autowired val restTemplate: RestTemplate) {
+class OrderController(val restTemplate: RestTemplate, val orderUseCases: OrderUseCasesApi) {
+
 
     val log = LoggerFactory.getLogger(OrderController::class.java)
 

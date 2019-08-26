@@ -1,7 +1,8 @@
 package com.example.orderservice
 
-import com.example.orderservice.OrderController.Companion.DEFAULT_ORDER_ID
-import com.example.orderservice.dto.Order
+import com.example.orderservice.rest.OrderController
+import com.example.orderservice.rest.OrderController.Companion.DEFAULT_ORDER_ID
+import com.example.orderservice.rest.dto.Order
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Ignore
 import org.junit.Test

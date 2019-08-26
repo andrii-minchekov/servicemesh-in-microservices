@@ -1,4 +1,4 @@
-package com.example.orderservice.dto
+package com.example.orderservice.rest.dto
 
 import com.fasterxml.jackson.databind.ObjectMapper
 
@@ -7,7 +7,6 @@ abstract class Dto {
         return ObjectMapper().writeValueAsString(this)
     }
 }
-
 
 data class User(var id: String = "1000"): Dto()
 
