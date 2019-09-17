@@ -5,7 +5,7 @@ plugins {
     id("com.google.cloud.tools.jib") version "1.5.1" apply false
     id("org.springframework.boot") version "2.1.1.RELEASE" apply false
     id("io.spring.dependency-management") version "1.0.6.RELEASE" apply true
-    id("org.jetbrains.kotlin.plugin.spring") version "1.3.11" apply false
+    id("org.jetbrains.kotlin.plugin.spring") version "1.3.50" apply false
 }
 
 allprojects {

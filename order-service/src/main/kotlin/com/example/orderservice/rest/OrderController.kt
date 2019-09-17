@@ -1,7 +1,8 @@
 package com.example.orderservice.rest
 
+import com.example.orderservice.domain.order.Order.Companion.USER_ID
 import com.example.orderservice.domain.order.OrderUseCasesApi
-import com.example.orderservice.rest.dto.Order
+import com.example.orderservice.rest.dto.OrderView
 import com.example.orderservice.rest.dto.User
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -12,83 +13,56 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping(
-    "/orders",
-    produces = [MediaType.APPLICATION_JSON_UTF8_VALUE]
+        "/orders",
+        produces = [MediaType.APPLICATION_JSON_UTF8_VALUE]
 )
 class OrderController(val restTemplate: RestTemplate, val orderUseCases: OrderUseCasesApi) {
 
-
-    val log = LoggerFactory.getLogger(OrderController::class.java)
-
-    companion object {
-        const val DEFAULT_ORDER_ID = "10000"
-        const val USER_ID = "1000"
-    }
-
-    private val repository: MutableMap<String, Order> = mutableMapOf(DEFAULT_ORDER_ID to Order())
-
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    @ResponseStatus(HttpStatus.CREATED)
-    fun add(@RequestBody order: Order): String {
-        val id = ('a'..'z').random(16)
-        repository[id] = order.copy(id = id)
-        return id
-    }
-
-    @PostMapping(value = ["/ids"], consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    @ResponseStatus(HttpStatus.CREATED)
-    fun registerIds(@RequestBody ids: Array<Int>): Boolean {
-        ids.forEach {
-            repository[it.toString()] = Order(id = it.toString())
-        }
-        log.info("Registered ${ids.size} ids")
-        return true
-    }
-
-    @GetMapping(value = ["/{orderId}"])
-    fun find(@PathVariable orderId: String): Order {
-        return repository.getOrDefault(orderId, Order())
-    }
-
-    @GetMapping
-    fun findAll(): Collection<Order> {
-        validateUserAccess()
-        return repository.values.filter { it.userId == USER_ID }
-    }
-
+    val log = LoggerFactory.getLogger(OrderController::class.java)!!
     private var serverFailures: Int = 0
     private var clientFailures: Int = 0
 
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ResponseStatus(HttpStatus.CREATED)
+    fun add(@RequestBody orderView: OrderView): String {
+        val order = orderView.toDomain()
+        orderUseCases.createOrder(order)
+        return order.id
+    }
+
+    @GetMapping(value = ["/{orderId}"])
+    fun find(@PathVariable orderId: String): OrderView {
+        return OrderView.from(orderUseCases.findOrderBy(orderId))
+    }
+
+    @GetMapping
+    fun findAll(): Collection<OrderView> {
+        validateUserAccess()
+        return orderUseCases.findAllOrders().map { domain -> OrderView.from(domain) }
+    }
+
     @GetMapping(value = ["/server"])
-    fun findAllFailureAcccrualServer(): Collection<Order> {
+    fun findAllFailureAcccrualServer(): Collection<OrderView> {
         if (serverFailures == 3) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "500 error")
         }
         serverFailures++
-        return repository.values.filter { it.userId == USER_ID }
+        return orderUseCases.findAllOrders().map { domain -> OrderView.from(domain) }
     }
 
 
     @GetMapping(value = ["/client"])
-    fun findAllFailureAcccrualClient(): Collection<Order> {
+    fun findAllFailureAcccrualClient(): Collection<OrderView> {
         if (clientFailures == 3) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "400 error")
         }
         clientFailures++
-        return repository.values.filter { it.userId == USER_ID }
+        return orderUseCases.findAllOrders().map { domain -> OrderView.from(domain) }
     }
 
 
     private fun validateUserAccess() {
         restTemplate.getForObject("http://user-service/users/$USER_ID", User::class.java)
-            ?: throw IllegalArgumentException("User with id $USER_ID doesn't exist")
+                ?: throw IllegalArgumentException("User with id $USER_ID doesn't exist")
     }
 }
-
-fun CharRange.random(count: Int): String {
-    return (0..count)
-        .map { kotlin.random.Random.nextInt(0, this.count()) }
-        .map { this.elementAt(it) }
-        .joinToString("")
-}
-

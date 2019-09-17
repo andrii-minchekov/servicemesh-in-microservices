@@ -33,9 +33,12 @@ dependencies {
     implementation("org.hobsoft.spring:spring-rest-template-logger:2.0.0")
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
+    
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")    
+    testImplementation ("com.structurizr:structurizr-client:1.3.0")
+    testImplementation ("com.structurizr:structurizr-spring:1.3.0")
 }
 
 tasks.test {

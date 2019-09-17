@@ -4,7 +4,7 @@
 //import com.example.orderservice.rest.dto.ClientException
 //import com.example.orderservice.rest.dto.ServerException
 //import org.springframework.core.Ordered
-//import org.springframework.core.annotation.Order
+//import org.springframework.core.annotation.OrderView
 //import org.springframework.http.HttpStatus
 //import org.springframework.http.ResponseEntity
 //import org.springframework.web.bind.annotation.ControllerAdvice
@@ -13,7 +13,7 @@
 //import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 //
 //
-//@Order(Ordered.HIGHEST_PRECEDENCE)
+//@OrderView(Ordered.HIGHEST_PRECEDENCE)
 //@ControllerAdvice
 //class RestExceptionHandler : ResponseEntityExceptionHandler() {
 //

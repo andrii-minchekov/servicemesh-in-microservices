@@ -2,8 +2,8 @@ This project demonstrate how to leverage [Service Mesh](https://linkerd.io/1/get
 
 Up and run:
 1. `./gradlew clean jibDockerBuild` (build docker images locally) or `./gradlew clean jib` (build and push docker images to configured $dockerRepository)
-2. `cd docker && docker-compose up -d --scale order-service=2 --scale user-service=2` (up and run docker containers with all the business and technical services).
-3. `curl http://localhost:8070/order-service/orders`. Data-flow: api-gateway -> linkerd -> order-service -> linkerd -> user-service.
+2. `cd docker && docker-compose up -d --scale orderView-service=2 --scale user-service=2` (up and run docker containers with all the business and technical services).
+3. `curl http://localhost:8070/orderView-service/orders`. Data-flow: api-gateway -> linkerd -> orderView-service -> linkerd -> user-service.
 
 Project Architecture
 
