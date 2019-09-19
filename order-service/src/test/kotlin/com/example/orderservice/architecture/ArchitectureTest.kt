@@ -1,4 +1,4 @@
-package com.example.orderservice
+package com.example.orderservice.architecture
 
 import com.structurizr.Workspace
 import com.structurizr.analysis.*
@@ -12,10 +12,15 @@ import java.util.*
 import java.util.function.Consumer
 
 class ArchitectureTest {
+
     private val workspaceId = 46652L
     private val apiKey = "efe06412-a3df-4325-bb7c-a0a6af61725b"
     private val apiSecret = "cdbc04e6-ad93-44c2-9df9-1ea4da76ac99"
     private val structClient = StructurizrClient(apiKey, apiSecret)
+
+    init {
+        structClient.workspaceArchiveLocation = File("build/resources/main/spec")
+    }
 
     @Test
     fun shouldActualComponentsComplyWithArchitectureModel() {
