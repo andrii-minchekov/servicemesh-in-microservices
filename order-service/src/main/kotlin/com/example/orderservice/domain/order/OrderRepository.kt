@@ -5,6 +5,9 @@ import com.example.orderservice.domain.order.Order.Companion.DEFAULT_PRODUCT_ID
 import com.example.orderservice.domain.order.Order.Companion.USER_ID
 import org.springframework.stereotype.Repository
 
+/**
+ * Component specifying all set of operations with with order persistent storage
+ */
 interface OrderRepository {
     fun saveOrder(order: Order)
     fun findOrderBy(orderId: String): Order?
@@ -12,16 +15,17 @@ interface OrderRepository {
 
     @Repository
     class InMemOrderRepository : OrderRepository {
+
         override fun findAll(): Collection<Order> {
             return repository.values.toList()
         }
 
         override fun findOrderBy(orderId: String): Order? {
-            return repository.get(orderId)
+            return repository[orderId]
         }
 
         override fun saveOrder(order: Order) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            repository[order.id] = order
         }
 
         private val repository: MutableMap<String, Order> = mutableMapOf(DEFAULT_ORDER_ID to Order(USER_ID, listOf(OrderItem(DEFAULT_PRODUCT_ID, 100))))

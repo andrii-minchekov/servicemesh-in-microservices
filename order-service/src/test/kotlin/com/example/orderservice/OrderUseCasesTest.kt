@@ -11,7 +11,7 @@ internal class OrderUseCasesTest {
     @Test
     fun `should create new order in system`() {
         val repo = InMemOrderRepository()
-        val useCases = OrderUseCases(repo)
+        val useCases = OrderUseCasesImpl(repo)
         val order = Order(
             userId = UUID.randomUUID().toString(),
             lineItems = arrayListOf(OrderItem(productId = UUID.randomUUID().toString(), quantity = 10))

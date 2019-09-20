@@ -1,7 +1,7 @@
 package com.example.orderservice.rest
 
 import com.example.orderservice.domain.order.Order.Companion.USER_ID
-import com.example.orderservice.domain.order.OrderUseCasesApi
+import com.example.orderservice.domain.order.OrderUseCases
 import com.example.orderservice.rest.dto.OrderView
 import com.example.orderservice.rest.dto.User
 import org.slf4j.LoggerFactory
@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.server.ResponseStatusException
 
+
+/**
+ * Public API of Order Service
+ */
 @RestController
 @RequestMapping(
         "/orders",
         produces = [MediaType.APPLICATION_JSON_UTF8_VALUE]
 )
-class OrderController(val restTemplate: RestTemplate, val orderUseCases: OrderUseCasesApi) {
+class OrderController(val restTemplate: RestTemplate, val orderUseCases: OrderUseCases) {
 
     val log = LoggerFactory.getLogger(OrderController::class.java)!!
     private var serverFailures: Int = 0

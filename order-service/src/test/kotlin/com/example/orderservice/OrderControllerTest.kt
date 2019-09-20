@@ -1,7 +1,7 @@
 package com.example.orderservice
 
 import com.example.orderservice.domain.order.Order.Companion.DEFAULT_ORDER_ID
-import com.example.orderservice.domain.order.OrderUseCasesApi
+import com.example.orderservice.domain.order.OrderUseCases
 import com.example.orderservice.rest.OrderController
 import com.example.orderservice.rest.dto.OrderView
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -27,7 +27,7 @@ class OrderControllerTest {
     private lateinit var mvc: MockMvc
 
     @MockBean
-    private lateinit var useCases: OrderUseCasesApi
+    private lateinit var useCases: OrderUseCases
 
     @Test
     fun `should not find order if it wasnt created`() {

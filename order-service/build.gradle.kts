@@ -32,6 +32,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
     implementation("org.hobsoft.spring:spring-rest-template-logger:2.0.0")
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
+
+    compile( files("${System.getProperty("java.home")}/../lib/tools.jar"))
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
     
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -46,6 +48,8 @@ tasks.test {
     testLogging {
         events("passed", "skipped", "failed")
     }
+
+    doLast {print("JAVATOOLS = ${System.getProperty("java.home")}/../lib/tools.jar")}
 }
 
 val dockerRepository: String by project
