@@ -3,14 +3,13 @@ package com.example.orderservice.architecture
 import com.structurizr.Workspace
 import com.structurizr.analysis.ComponentFinder
 import com.structurizr.analysis.ReferencedTypesSupportingTypesStrategy
-import com.structurizr.analysis.SourceCodeComponentFinderStrategy
 import com.structurizr.analysis.SpringComponentFinderStrategy
+import com.structurizr.analysis.StructurizrAnnotationsComponentFinderStrategy
 import com.structurizr.api.StructurizrClient
 import com.structurizr.model.Container
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
-
 
 class ArchitectureTest {
 
@@ -39,15 +38,19 @@ class ArchitectureTest {
         val componentFinder = ComponentFinder(
             webApplication,
             "com.example",
+            StructurizrAnnotationsComponentFinderStrategy(ReferencedTypesSupportingTypesStrategy(true)),
             springComponentFinderStrategy,
-            SourceCodeComponentFinderStrategy(File(sourceRoot, "/src/main/kotlin/"), 150)
+            SourceCodeComponentFinderStrategy(
+                sourceRoot,
+                150
+            )
         )
 
         val actualComponents = componentFinder.findComponents()
 
         linkComponentsWithSourceTree(webApplication)
 
-        assertThat(actualComponents).hasSize(3)
+        assertThat(actualComponents).hasSize(4)
 
         val componentView = workspace.views.createComponentView(
             webApplication,
@@ -73,5 +76,4 @@ class ArchitectureTest {
         }
     }
 }
-
 

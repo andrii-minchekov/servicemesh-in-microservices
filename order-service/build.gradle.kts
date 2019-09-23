@@ -21,6 +21,14 @@ tasks {
         main = "com.example.orderservice.OrderServiceApplicationKt"
 //        args("--spring.profiles.active=demo")
     }
+
+//    "modelArch"(JavaExec::class) {
+//        main = "com.example.Main"
+//        classpath(
+//            sourceSets.main.runtimeClasspath,
+//            "/Users/Documents/spring-service/target/classes")
+//        args("/Users/Documents/spring-service/")
+//    }
 }
 
 dependencies {
@@ -33,7 +41,9 @@ dependencies {
     implementation("org.hobsoft.spring:spring-rest-template-logger:2.0.0")
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
 
-    compile( files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    implementation( files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    implementation("org.seamless:seamless-javadoc:1.1.2")
+
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
     
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -68,3 +78,8 @@ jib {
         jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
     }
 }
+
+//com.sun.tools.javadoc.resources.javadoc {
+//    classpath += sourceSets.test.compileClasspath
+//    source += sourceSets.test.allJava
+//}

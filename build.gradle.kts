@@ -14,6 +14,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven("http://4thline.org/m2")
         maven("http://repo.spring.io/milestone")
     }
 }
