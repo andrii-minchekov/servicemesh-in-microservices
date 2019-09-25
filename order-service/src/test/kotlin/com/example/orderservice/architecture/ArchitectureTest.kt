@@ -1,14 +1,11 @@
 package com.example.orderservice.architecture
 
 import com.structurizr.Workspace
-import com.structurizr.analysis.ComponentFinder
-import com.structurizr.analysis.ReferencedTypesSupportingTypesStrategy
-import com.structurizr.analysis.SpringComponentFinderStrategy
-import com.structurizr.analysis.StructurizrAnnotationsComponentFinderStrategy
+import com.structurizr.analysis.*
 import com.structurizr.api.StructurizrClient
 import com.structurizr.model.Container
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class ArchitectureTest {
@@ -17,7 +14,9 @@ class ArchitectureTest {
     private val apiKey = "efe06412-a3df-4325-bb7c-a0a6af61725b"
     private val apiSecret = "cdbc04e6-ad93-44c2-9df9-1ea4da76ac99"
     private val structClient = StructurizrClient(apiKey, apiSecret)
-    private val sourceRoot = File("/Users/anmi/git/service-mesh-github/order-service")
+    private val sourceRootKotlin = File("src/main/kotlin")
+    private val sourceRootKotlinTest = File("src/test/kotlin")
+    private val sourceRootJavaTest = File("src/test/java")
 
     init {
         structClient.workspaceArchiveLocation = File("build/resources/main")
@@ -40,17 +39,16 @@ class ArchitectureTest {
             "com.example",
             StructurizrAnnotationsComponentFinderStrategy(ReferencedTypesSupportingTypesStrategy(true)),
             springComponentFinderStrategy,
-            SourceCodeComponentFinderStrategy(
-                sourceRoot,
-                150
-            )
+            SourceCodeComponentFinderStrategy(sourceRootKotlin, 150),
+            SourceCodeComponentFinderStrategy(sourceRootKotlinTest, 150),
+            SourceCodeComponentFinderStrategy(sourceRootJavaTest, 150)
         )
-
         val actualComponents = componentFinder.findComponents()
-
         linkComponentsWithSourceTree(webApplication)
 
-        assertThat(actualComponents).hasSize(4)
+        assertThat(actualComponents.map { it.description }.filter { it.isNotBlank() })
+            .containsOnly("java component description")
+        assertThat(actualComponents).hasSize(5)
 
         val componentView = workspace.views.createComponentView(
             webApplication,
@@ -68,9 +66,9 @@ class ArchitectureTest {
                 val sourcePath = codeElement.url
                 if (sourcePath != null) {
                     codeElement.url = sourcePath.replace(
-                        sourceRoot.toURI().toString(),
-                        "https://github.com/menya84/servicemesh-in-microservices/tree/arch-model/"
-                    )  //          "https://github.com/menya84/servicemesh-in-microservices/tree/arch-model/order-service/src/main/kotlin/"
+                        sourceRootJavaTest.toURI().toString(),
+                        "https://github.com/menya84/servicemesh-in-microservices/tree/arch-model/order-service/src/test/java/"
+                    )
                 }
             }
         }

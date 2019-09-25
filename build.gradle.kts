@@ -1,11 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.11" apply false
+    kotlin("jvm") version "1.3.50" apply false
     id("com.google.cloud.tools.jib") version "1.5.1" apply false
     id("org.springframework.boot") version "2.1.1.RELEASE" apply false
     id("io.spring.dependency-management") version "1.0.6.RELEASE" apply true
     id("org.jetbrains.kotlin.plugin.spring") version "1.3.50" apply false
+    id("org.jetbrains.dokka") version "0.9.18" apply false
 }
 
 allprojects {
@@ -16,6 +17,7 @@ allprojects {
         mavenCentral()
         maven("http://4thline.org/m2")
         maven("http://repo.spring.io/milestone")
+        jcenter()
     }
 }
 

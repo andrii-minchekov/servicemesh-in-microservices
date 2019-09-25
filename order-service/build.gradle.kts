@@ -4,6 +4,14 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.spring")
+    id("org.jetbrains.dokka")
+}
+
+sourceSets.create("main-java") {
+    java.srcDir("src/main/java")
+}
+sourceSets.create("test-java") {
+    java.srcDir("src/test/java")
 }
 
 java {
@@ -21,14 +29,10 @@ tasks {
         main = "com.example.orderservice.OrderServiceApplicationKt"
 //        args("--spring.profiles.active=demo")
     }
+}
 
-//    "modelArch"(JavaExec::class) {
-//        main = "com.example.Main"
-//        classpath(
-//            sourceSets.main.runtimeClasspath,
-//            "/Users/Documents/spring-service/target/classes")
-//        args("/Users/Documents/spring-service/")
-//    }
+tasks.dokka {
+    outputFormat = "javadoc"
 }
 
 dependencies {
@@ -41,7 +45,7 @@ dependencies {
     implementation("org.hobsoft.spring:spring-rest-template-logger:2.0.0")
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
 
-    implementation( files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    compile( files("${System.getProperty("java.home")}/../lib/tools.jar"))
     implementation("org.seamless:seamless-javadoc:1.1.2")
 
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
@@ -51,6 +55,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")    
     testImplementation ("com.structurizr:structurizr-client:1.3.0")
     testImplementation ("com.structurizr:structurizr-spring:1.3.0")
+
+
 }
 
 tasks.test {
@@ -58,8 +64,7 @@ tasks.test {
     testLogging {
         events("passed", "skipped", "failed")
     }
-
-    doLast {print("JAVATOOLS = ${System.getProperty("java.home")}/../lib/tools.jar")}
+    doFirst {print("JAVATOOLS = ${System.getProperty("java.home")}/../lib/tools.jar")}
 }
 
 val dockerRepository: String by project
@@ -78,8 +83,3 @@ jib {
         jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
     }
 }
-
-//com.sun.tools.javadoc.resources.javadoc {
-//    classpath += sourceSets.test.compileClasspath
-//    source += sourceSets.test.allJava
-//}
