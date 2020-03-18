@@ -9,32 +9,32 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("/users")
 object UserController {
     const val DEFAULT_ID = "1000"
-    private val repository: MutableMap<String, User> = mutableMapOf(DEFAULT_ID to User())
+    private val REPOSITORY: MutableMap<String, UserDto> = mutableMapOf(DEFAULT_ID to UserDto())
 
     @PostMapping
-    fun add(@RequestBody user: User): String {
+    fun add(@RequestBody userDto: UserDto): String {
         val id = ('a'..'z').random(16)
-        repository[id] = user.copy(id = id)
+        REPOSITORY[id] = userDto.copy(id = id)
         return id
     }
 
     @GetMapping(value = ["/{userId}"])
-    fun find(@PathVariable userId: String): User {
-        return repository.getOrDefault(userId, User())
+    fun find(@PathVariable userId: String): UserDto {
+        return REPOSITORY.getOrDefault(userId, UserDto())
     }
 
     @GetMapping
-    fun findAll(): Collection<User> {
-        return repository.values
+    fun findAll(): Collection<UserDto> {
+        return REPOSITORY.values
     }
 
     @GetMapping("/server")
-    fun findAllThrowsServerError(): Collection<User> {
+    fun findAllThrowsServerError(): Collection<UserDto> {
         throw ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Service is down")
     }
 }
 
-data class User(var name: String = "DEFAULT_NAME", var id: String = DEFAULT_ID)
+data class UserDto(var name: String = "DEFAULT_NAME", var id: String = DEFAULT_ID)
 
 fun CharRange.random(count: Int): String {
     return (0..count)

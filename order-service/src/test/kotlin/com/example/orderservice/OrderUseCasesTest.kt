@@ -18,9 +18,8 @@ internal class OrderUseCasesTest {
             userId = UUID.randomUUID().toString(),
             lineItems = arrayListOf(LineItem(productId = UUID.randomUUID().toString(), quantity = 10))
         )
+        useCases.create(order)
 
-        useCases.createOrder(order)
-
-        assertThat(repo.findOrder(order.id)).isNotNull
+        assertThat(repo.findOne(order.id)).isNotNull
     }
 }

@@ -14,7 +14,7 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven("http://repo.spring.io/milestone")
+        maven("https://repo.spring.io/milestone")
     }
 }
 
@@ -28,7 +28,7 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom("org.springframework.cloud:spring-cloud-dependencies:Greenwich.RC2")
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:Greenwich.SR5")
         }
     }
 }

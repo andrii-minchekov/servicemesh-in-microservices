@@ -3,6 +3,7 @@ package com.example.orderservice.domain.order
 
 interface OrderUseCasesApi {
 
-    fun createOrder(order: Order)
-
+    fun create(order: Order): Order
+    fun findOne(orderId: String): Order?
+    fun findAll(): List<Order>
 }

@@ -1,6 +1,7 @@
 package com.example.orderservice.domain.order
 
 interface OrderRepository {
-    fun saveOrder(order: Order)
-    fun findOrder(orderId: String): Order?
+    fun save(order: Order): Order
+    fun findOne(orderId: String): Order?
+    fun findAll(): List<Order>
 }

@@ -5,13 +5,18 @@ import org.springframework.stereotype.Repository
 @Repository
 class InMemOrderRepository : OrderRepository {
 
-    private val orders : MutableMap<String, Order> = mutableMapOf()
+    private val orders: MutableMap<String, Order> = mutableMapOf()
 
-    override fun findOrder(orderId: String): Order? {
+    override fun findOne(orderId: String): Order? {
         return orders[orderId]
     }
 
-    override fun saveOrder(order: Order) {
+    override fun findAll(): List<Order> {
+        return orders.values.toList()
+    }
+
+    override fun save(order: Order): Order {
         orders[order.id] = order
+        return order
     }
 }

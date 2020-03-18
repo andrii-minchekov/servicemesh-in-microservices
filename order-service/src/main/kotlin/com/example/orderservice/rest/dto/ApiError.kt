@@ -4,15 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-
 class ApiError private constructor() {
-
     lateinit var status: HttpStatus
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     val timestamp: LocalDateTime = LocalDateTime.now()
     var message: String? = null
     var debugMessage: String? = null
-    val subErrors: List<ApiSubError>? = null
+    val subErrors: List<ApiSubError> = mutableListOf()
 
     constructor(status: HttpStatus) : this() {
         this.status = status
