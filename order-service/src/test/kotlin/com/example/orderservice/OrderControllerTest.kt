@@ -2,9 +2,12 @@ package com.example.orderservice
 
 import com.example.orderservice.domain.order.Order
 import com.example.orderservice.domain.order.OrderUseCasesApi
+import com.example.orderservice.integration.UserServiceClient
 import com.example.orderservice.rest.OrderController
 import com.example.orderservice.rest.dto.OrderDto
 import com.example.orderservice.rest.dto.toDto
+import com.example.orderservice.rest.error.ApiError
+import com.example.orderservice.rest.error.ApiSubError
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @WebMvcTest(OrderController::class)
@@ -28,6 +32,8 @@ class OrderControllerTest {
     private lateinit var mvc: MockMvc
     @MockBean
     private lateinit var orderUseCases: OrderUseCasesApi
+    @MockBean
+    private lateinit var userServiceClient: UserServiceClient
     private val api = Api()
 
     @Test
@@ -43,14 +49,13 @@ class OrderControllerTest {
 
     @Test
     fun shouldCreateOrderSuccess() {
-        val userId = "1"
+        val userId = UUID.randomUUID().toString()
         val toCreate = OrderDto(userId = userId)
         val order = Order(userId, listOf())
         `when`(orderUseCases.create(any())).thenReturn(order)
         `when`(orderUseCases.findOne(orderId = order.id)).thenReturn(order)
 
         val createResponse = api.create(toCreate)
-
         assertThat(createResponse.status).isEqualTo(HttpStatus.CREATED.value())
 
         val orderId = createResponse.contentAsString
@@ -61,6 +66,23 @@ class OrderControllerTest {
         assertThat(actualOrder).isEqualTo(order.toDto())
     }
 
+    @Test
+    fun shouldReturnApiErrorWhenCreateOrderWithNotValidUser() {
+        val nonValidUserId = "1"
+        val toCreate = OrderDto(userId = nonValidUserId)
+
+        val createResponse = api.create(toCreate)
+
+        assertThat(createResponse.status).isEqualTo(HttpStatus.BAD_REQUEST.value())
+
+        val expectedApiError = ApiError(
+            "any", "order-4002", "Input fields contain errors",
+            subErrors = listOf(ApiSubError("orderDto", "userId", "1", "size must be between 36 and 36"))
+        )
+        assertThat(createResponse.contentAsString.deserialize(ApiError::class.java)).isEqualTo(expectedApiError)
+    }
+
+    //TODO migrate to junit5
     @Test
     fun shouldReturnApiErrorIfCreateOrderWithNoLineItems() {
 

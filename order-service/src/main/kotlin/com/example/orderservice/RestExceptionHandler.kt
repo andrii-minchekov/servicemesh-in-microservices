@@ -1,13 +1,15 @@
 package com.example.orderservice
 
-import com.example.orderservice.rest.dto.ApiError
-import com.example.orderservice.rest.dto.ClientException
-import com.example.orderservice.rest.dto.ServerException
+import com.example.orderservice.rest.error.ApiError
+import com.example.orderservice.rest.error.ApiErrorFactory
+import com.example.orderservice.rest.error.RestException
 import org.slf4j.LoggerFactory
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
@@ -18,17 +20,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 class RestExceptionHandler : ResponseEntityExceptionHandler() {
 
-    @ExceptionHandler(ClientException::class, ServerException::class)
-    fun handleCustom(ex: Throwable, request: WebRequest): ResponseEntity<ApiError> {
+    @ExceptionHandler(RestException::class)
+    fun handleCustom(ex: RestException, request: WebRequest): ResponseEntity<ApiError> {
         LoggerFactory.getLogger(RestExceptionHandler::class.java).info("About to handle an exception: ", ex)
-        val msg = "Specify user visible error"
-        if (ex is ServerException || ex is IllegalStateException) {
-            return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, msg, ex))
-        }
-        return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, msg, ex))
+        return ResponseEntity(
+            ApiErrorFactory.error(ex),
+            ex.status
+        )
     }
 
-    private fun buildResponseEntity(apiError: ApiError): ResponseEntity<ApiError> {
-        return ResponseEntity(apiError, apiError.status)
+    override fun handleMethodArgumentNotValid(
+        ex: MethodArgumentNotValidException,
+        headers: HttpHeaders, status: HttpStatus?, request: WebRequest?
+    ): ResponseEntity<Any> {
+        return ResponseEntity(ApiErrorFactory.error(ex), status);
     }
 }

@@ -1,10 +1,10 @@
 package com.example.orderservice
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.mockito.Mockito
 
 fun <T> String.deserialize(claz: Class<T>): T {
-    return ObjectMapper().readValue(this, claz)
+    return jacksonObjectMapper().readValue(this, claz)
 }
 
 fun <T> any(): T {
