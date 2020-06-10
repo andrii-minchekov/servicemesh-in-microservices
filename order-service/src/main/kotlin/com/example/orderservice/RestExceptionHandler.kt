@@ -31,7 +31,7 @@ class RestExceptionHandler : ResponseEntityExceptionHandler() {
 
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
-        headers: HttpHeaders, status: HttpStatus?, request: WebRequest?
+        headers: HttpHeaders, status: HttpStatus, request: WebRequest?
     ): ResponseEntity<Any> {
         return ResponseEntity(ApiErrorFactory.error(ex), status);
     }

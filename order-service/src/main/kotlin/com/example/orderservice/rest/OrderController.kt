@@ -5,6 +5,7 @@ import com.example.orderservice.domain.order.OrderUseCasesApi
 import com.example.orderservice.integration.UserServiceClient
 import com.example.orderservice.rest.dto.OrderDto
 import com.example.orderservice.rest.dto.toDto
+import com.example.orderservice.rest.dto.toModel
 import com.example.orderservice.rest.error.EntityNotFoundException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,4 +1,4 @@
-FROM grafana/grafana
+FROM grafana/grafana:6.2.4
 
 ENV GF_AUTH_ANONYMOUS_ENABLED=true
 ENV GF_AUTH_ANONYMOUS_ORG_ROLE=Admin

@@ -1,7 +1,5 @@
 package com.example.orderservice.rest.dto
 
-import com.example.orderservice.domain.order.LineItem
-import com.example.orderservice.domain.order.Order
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import javax.validation.constraints.Size
@@ -16,7 +14,7 @@ data class User(var id: String = "1000") : Dto()
 
 data class OrderDto(
     @JsonProperty("userId")
-    @get:Size(min = 36, max = 36)
+    @get:Size(min = 1, max = 36)
     var userId: String,
     @JsonProperty("items")
     var items: Array<LineItemDto> = arrayOf(LineItemDto("DEFAULT_ITEM1", 1))
@@ -48,10 +46,5 @@ data class OrderDto(
     }
 }
 
-fun Order.toDto() = OrderDto(this.id, this.userId, this.lineItems.map { it.toDto() }.toTypedArray())
+data class LineItemDto(val productId: String, val quantity: Int) : Dto()
 
-data class LineItemDto(val productId: String, val quantity: Int) : Dto() {
-    fun toModel(): LineItem = LineItem(productId = this.productId, quantity = this.quantity)
-}
-
-fun LineItem.toDto() = LineItemDto(this.productId, this.quantity)
