@@ -23,4 +23,5 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured:4.3.0")
     testImplementation("com.fasterxml.jackson.core:jackson-databind:2.9.7")
     testImplementation("org.assertj:assertj-core:3.16.1")
+    testImplementation("com.google.code.gson:gson:2.8.6")
 }

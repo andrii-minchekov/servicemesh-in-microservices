@@ -5,5 +5,5 @@ interface OrderUseCasesApi {
 
     fun create(order: Order): Order
     fun findOne(orderId: String): Order?
-    fun findAll(): List<Order>
+    fun findAll(): Collection<Order>
 }

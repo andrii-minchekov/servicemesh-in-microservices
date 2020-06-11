@@ -9,7 +9,7 @@ class OrderUseCases(val repo: OrderRepository) : OrderUseCasesApi {
         return repo.save(order)
     }
 
-    override fun findAll(): List<Order> {
+    override fun findAll(): Collection<Order> {
         return repo.findAll()
     }
 

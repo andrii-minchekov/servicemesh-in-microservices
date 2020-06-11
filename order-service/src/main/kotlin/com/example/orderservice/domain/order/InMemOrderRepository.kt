@@ -1,8 +1,10 @@
 package com.example.orderservice.domain.order
 
-import org.springframework.stereotype.Repository
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
-@Repository
+@Component
+@ConditionalOnProperty(name = ["distributed-cache.enabled"], havingValue = "false", matchIfMissing = true)
 class InMemOrderRepository : OrderRepository {
 
     private val orders: MutableMap<String, Order> = mutableMapOf()
@@ -11,7 +13,7 @@ class InMemOrderRepository : OrderRepository {
         return orders[orderId]
     }
 
-    override fun findAll(): List<Order> {
+    override fun findAll(): Collection<Order> {
         return orders.values.toList()
     }
 
