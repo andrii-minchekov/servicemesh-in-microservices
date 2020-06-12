@@ -4,21 +4,22 @@ import com.example.systemtest.dto.OrderDto
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
-import io.restassured.response.Response
 import org.apache.http.HttpStatus.SC_CREATED
 import org.apache.http.HttpStatus.SC_OK
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.TestInstance
-import java.lang.System.lineSeparator
 import java.util.*
-
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OrderSystemTest {
 
-    private val shouldTestMultiInstance = true
+    private val isServerSideBalanced = false
+    private val servers = arrayOf("http://192.168.1.235:8072", "http://192.168.1.118:8072")
+    private val roundRobinUri = RoundRobin(servers)
+    private val staticAliasUri = { "http://order-service-8072" }
+    private lateinit var baseUri: () -> String
 
     companion object {
         const val BASE_PATH = "orders"
@@ -28,38 +29,27 @@ class OrderSystemTest {
     @BeforeAll
     fun setUp() {
         RestAssured.basePath = BASE_PATH
-        if (shouldTestMultiInstance) {
-            RestAssured.baseURI = "http://order-service-8072"
+        baseUri = if (isServerSideBalanced) {
             RestAssured.proxy("localhost", 4141)
+            staticAliasUri
         } else {
-            RestAssured.baseURI = "http://localhost:8072"
+            roundRobinUri
         }
     }
 
     @RepeatedTest(2)
     fun shouldReturnNewlyCreatedOrder() {
+        val orderDto = OrderDto(USER_ID)
         val createResponse = given()
-            // .log().all()
-            .basePath(BASE_PATH)
-            .body(OrderDto(USER_ID))
+            .baseUri(baseUri())
+            .body(orderDto)
             .contentType(ContentType.JSON)
             .post();
-        //  logResponse(createResponse)
         assertThat(createResponse.statusCode).isEqualTo(SC_CREATED)
 
         val getResponse = given()
-            //.log().all()
+            .baseUri(baseUri())
             .get("/{orderId}", createResponse.body.asString());
-        // logResponse(getResponse)
         assertThat(getResponse.statusCode).isEqualTo(SC_OK)
-    }
-
-    private fun logResponse(response: Response) {
-        println()
-        val builder = StringBuilder("RESPONSE:${lineSeparator()}")
-        builder.append("BODY:", lineSeparator(), response.body.asString(), lineSeparator())
-        builder.append("STATUS:", java.lang.String.valueOf(response.statusCode), lineSeparator())
-        builder.append("HEADERS:", lineSeparator(), response.headers.toString(), lineSeparator())
-        println(builder.toString())
     }
 }

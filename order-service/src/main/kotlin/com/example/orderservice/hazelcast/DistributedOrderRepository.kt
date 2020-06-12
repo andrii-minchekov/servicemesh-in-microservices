@@ -39,7 +39,7 @@ class DistributedOrderRepository(private val listener: ReplicatedMapEntryListene
     }
 
     override fun findOne(orderId: String): Order? {
-        return storage[orderId]
+        return storage.get(orderId)
     }
 
     override fun findAll(): Collection<Order> {
