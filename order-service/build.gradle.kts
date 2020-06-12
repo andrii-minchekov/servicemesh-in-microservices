@@ -61,6 +61,6 @@ jib {
     val debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5556"
     container {
         ports = mutableListOf("8072")
-        jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
+        jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141", "-Xmx4G", "-Xms4G")
     }
 }

@@ -33,7 +33,7 @@ class ReplicatedMapEntryListener : EntryListener<String, Order> {
     }
 
     override fun entryAdded(event: EntryEvent<String, Order>) {
-        log.info("Order ${event.value.id} was Added by member ${event.member.address} at ${time()}")
+        log.info("Order ${event.value.id} with size {${event.value.data.size}} was Added by member ${event.member.address} at ${time()}")
     }
 
     override fun entryRemoved(event: EntryEvent<String, Order>) {

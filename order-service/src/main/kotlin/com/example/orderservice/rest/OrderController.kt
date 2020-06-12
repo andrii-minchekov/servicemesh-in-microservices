@@ -26,7 +26,7 @@ class OrderController(val userServiceClient: UserServiceClient, val orderUseCase
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun add(@Valid @RequestBody dto: OrderDto): String {
-        return orderUseCases.create(Order(dto.userId, dto.items.map { it.toModel() })).id
+        return orderUseCases.create(Order(dto.userId, dto.items.map { it.toModel() }, dto.data)).id
     }
 
     @GetMapping(value = ["/{orderId}"])

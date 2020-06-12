@@ -1,0 +1,52 @@
+#Example of Microservice Architecture with Spring Boot, Microservice Architecture with Service Mesh, Service Mesh example Java/Kotlin, Service Mesh POC, Linkerd example Java/Kotlin, Linkerd Docker example
+version: '3.3'
+services:
+  order-service:
+    image: "$dockerRepository/order-service"
+    tty: true
+    stdin_open: true
+    ports:
+      - "9073-9074:8072"
+      - "5701-5702:5701"
+    #    - "5556:5556"
+    depends_on:
+      - consul-registrator
+
+  consul-server:
+    image: gliderlabs/consul-server
+    command: ["-bootstrap"]
+    ports:
+      - "8500:8500"
+
+  consul-registrator:
+    image: gliderlabs/registrator
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: ["-internal=true","consul://consul-server:8500"]
+    depends_on:
+      - consul-server
+
+  linkerd:
+    image: buoyantio/linkerd:1.6.0
+    ports:
+      - "3141:3141"
+      - "4140:4140"
+      - "4141:4141"
+      - "5140:5140"
+      - "5141:5141"
+      - "9990:9990"
+    # we must mount the config file and the disco directory
+    volumes:
+      - ./linkerd/linkerd.yaml:/io.buoyant/linkerd.yaml:ro
+      - ./linkerd/disco:/disco
+    command: >
+      /io.buoyant/linkerd.yaml -log.level=DEBUG -com.twitter.finagle.tracing.enabled=true
+  hazelcastmc:
+    image: hazelcast/management-center:4.0.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/data:/data
+    environment:
+      - MC_ADMIN_USER=admin
+      - MC_ADMIN_PASSWORD=nimda135

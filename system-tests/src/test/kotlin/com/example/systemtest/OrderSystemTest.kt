@@ -1,6 +1,5 @@
 package com.example.systemtest
 
-import com.example.systemtest.dto.LineItemDto
 import com.example.systemtest.dto.OrderDto
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
@@ -17,35 +16,41 @@ import java.util.*
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class OrderUseCasesTest {
+class OrderSystemTest {
+
+    private val shouldTestMultiInstance = true
 
     companion object {
-        const val PRODUCT_ID = "1"
-        const val QUANTITY = 1
         const val BASE_PATH = "orders"
         val USER_ID = UUID.randomUUID().toString()
     }
 
     @BeforeAll
     fun setUp() {
-        RestAssured.baseURI = "http://order-service"
         RestAssured.basePath = BASE_PATH
-        RestAssured.proxy("localhost", 4141)
+        if (shouldTestMultiInstance) {
+            RestAssured.baseURI = "http://order-service-8072"
+            RestAssured.proxy("localhost", 4141)
+        } else {
+            RestAssured.baseURI = "http://localhost:8072"
+        }
     }
 
-    @RepeatedTest(1)
+    @RepeatedTest(2)
     fun shouldReturnNewlyCreatedOrder() {
-        val createResponse = given().log().all()
+        val createResponse = given()
+            // .log().all()
             .basePath(BASE_PATH)
-            .body(OrderDto(USER_ID, arrayOf(LineItemDto(PRODUCT_ID, QUANTITY))))
+            .body(OrderDto(USER_ID))
             .contentType(ContentType.JSON)
             .post();
-        logResponse(createResponse)
+        //  logResponse(createResponse)
         assertThat(createResponse.statusCode).isEqualTo(SC_CREATED)
 
-        val getResponse = given().log().all()
+        val getResponse = given()
+            //.log().all()
             .get("/{orderId}", createResponse.body.asString());
-        logResponse(getResponse)
+        // logResponse(getResponse)
         assertThat(getResponse.statusCode).isEqualTo(SC_OK)
     }
 

@@ -96,7 +96,21 @@ routers:
           # The timeout for a single request attempt on the client.  If this
           # timeout is reached, the request attempt will be canceled and the request
           # will be retried if there is still time remaining in the total timeout.
+          requestAttemptTimeoutMs: 200
           loadBalancer:
             kind: roundRobin
           failureAccrual:
-            kind: none
+            kind: io.l5d.consecutiveFailures
+            failures: 10
+            backoff:
+              kind: constant
+              ms: 1000
+        - prefix: /#/io.l5d.consul/dc1/order-service
+          failureAccrual:
+            kind: io.l5d.consecutiveFailures
+            failures: 3
+
+        - prefix: /#/io.l5d.consul/dc1/user-service
+          failureAccrual:
+            kind: io.l5d.consecutiveFailures
+            failures: 1

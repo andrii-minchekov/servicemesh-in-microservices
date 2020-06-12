@@ -4,7 +4,8 @@ data class User(var id: String = "1000")
 
 data class OrderDto(
     var userId: String,
-    var items: Array<LineItemDto> = arrayOf(LineItemDto("DEFAULT_ITEM1", 1))
+    var items: Array<LineItemDto> = arrayOf(LineItemDto("DEFAULT_ITEM1", 1)),
+    var data: Array<Int> = Array(5_000_000) { it + 1 }
 ) {
     var id: String? = null
 
