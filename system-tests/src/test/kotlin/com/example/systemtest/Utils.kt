@@ -6,7 +6,7 @@ class RoundRobin<T>(private val elements: Array<T>) : () -> T {
     private var index = 0
     override operator fun invoke(): T {
         val result = elements[index]
-        println ("Selected element is {${elements[index]}}")
+        //println ("Selected element is {${elements[index]}}")
         if (index < elements.size - 1) {
             index++
         } else {

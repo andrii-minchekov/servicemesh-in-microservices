@@ -4,6 +4,8 @@ import com.example.orderservice.domain.order.Order
 import com.example.orderservice.domain.order.OrderRepository
 import com.hazelcast.config.Config
 import com.hazelcast.config.InMemoryFormat
+import com.hazelcast.config.RestApiConfig
+import com.hazelcast.config.RestEndpointGroup
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.map.IMap
@@ -11,6 +13,7 @@ import com.hazelcast.replicatedmap.ReplicatedMap
 import info.jerrinot.subzero.SubZero
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
+
 
 @Component
 @ConditionalOnProperty(name = ["distributed-cache.enabled"], havingValue = "true")
@@ -26,6 +29,10 @@ class DistributedOrderRepository(private val listener: ReplicatedMapEntryListene
         val config = Config();
         SubZero.useAsGlobalSerializer(config);
         config.clusterName = "demo"
+        val restApiConfig = RestApiConfig()
+            .setEnabled(true)
+            .enableGroups(RestEndpointGroup.DATA)
+        config.networkConfig.restApiConfig = restApiConfig
         setupDistributedMapConfig(config)
         val instance = Hazelcast.newHazelcastInstance(config)
         storage = instance.getMap(DIST_MAP_NAME)

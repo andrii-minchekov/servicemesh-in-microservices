@@ -1,5 +1,6 @@
 package com.example.systemtest
 
+import TimingExtension
 import com.example.systemtest.dto.OrderDto
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
@@ -10,13 +11,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(TimingExtension::class)
 class OrderSystemTest {
 
     private val isServerSideBalanced = false
-    private val servers = arrayOf("http://192.168.1.235:8072", "http://192.168.1.118:8072")
+    private val servers = arrayOf("http://192.168.1.118:8072", "http://192.168.1.235:8072")
     private val roundRobinUri = RoundRobin(servers)
     private val staticAliasUri = { "http://order-service-8072" }
     private lateinit var baseUri: () -> String
