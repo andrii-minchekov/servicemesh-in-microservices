@@ -34,6 +34,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
     implementation("com.hazelcast:hazelcast:4.0.1")
     implementation("info.jerrinot:subzero-all:0.10")
+    implementation("javax.cache:cache-api:1.1.1")
 
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
