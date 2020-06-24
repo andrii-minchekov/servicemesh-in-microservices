@@ -10,7 +10,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.cache.Cache
 import javax.cache.CacheManager
-import javax.cache.Caching
 import javax.cache.expiry.AccessedExpiryPolicy
 import javax.cache.expiry.Duration
 import javax.cache.integration.CacheLoader
@@ -18,7 +17,7 @@ import javax.cache.integration.CacheLoader
 
 @Component
 @ConditionalOnProperty(name = ["distributed-cache.enabled"], havingValue = "true")
-class DistributedOrderRepository : OrderRepository {
+class DistributedOrderRepository(private val cacheManager: CacheManager) : OrderRepository {
     companion object {
         val JCACHE_NAME = "cachedOrders" + "-" + UUID.randomUUID().toString()
     }
@@ -26,15 +25,14 @@ class DistributedOrderRepository : OrderRepository {
     private lateinit var storage: Cache<String, Order>
 
     init {
-        val cacheMgr: CacheManager = Caching.getCachingProvider().getCacheManager()
         val config: CacheConfiguration<String, Order> = CacheConfiguration()
-        config.setCacheMode(CacheMode.REPLICATED)
-        config.setStoreByValue(false)
+        config.cacheMode = CacheMode.REPLICATED
+        config.isStoreByValue = false
         //config.setReadThrough(true)
         //config.setCacheLoaderFactory(FactoryBuilder.SingletonFactory(cacheLoader()));
         config.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration(TimeUnit.MINUTES, 180)))
         config.isStatisticsEnabled = true
-        storage = cacheMgr.createCache(JCACHE_NAME, config)
+        storage = cacheManager.createCache(JCACHE_NAME, config)
     }
 
     private fun cacheLoader(): CacheLoader<String, Order> {
