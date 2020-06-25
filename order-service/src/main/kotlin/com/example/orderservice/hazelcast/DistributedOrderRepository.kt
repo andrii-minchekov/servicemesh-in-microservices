@@ -2,14 +2,13 @@ package com.example.orderservice.hazelcast
 
 import com.example.orderservice.domain.order.Order
 import com.example.orderservice.domain.order.OrderRepository
+import org.apache.ignite.Ignite
 import org.apache.ignite.cache.CacheMode
 import org.apache.ignite.configuration.CacheConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.cache.Cache
-import javax.cache.CacheManager
 import javax.cache.expiry.AccessedExpiryPolicy
 import javax.cache.expiry.Duration
 import javax.cache.integration.CacheLoader
@@ -17,9 +16,12 @@ import javax.cache.integration.CacheLoader
 
 @Component
 @ConditionalOnProperty(name = ["distributed-cache.enabled"], havingValue = "true")
-class DistributedOrderRepository(private val cacheManager: CacheManager) : OrderRepository {
+class DistributedOrderRepository(
+   // private val cacheManager: CacheManager,
+    private val ignite: Ignite
+) : OrderRepository {
     companion object {
-        val JCACHE_NAME = "cachedOrders" + "-" + UUID.randomUUID().toString()
+        const val JCACHE_NAME = "cachedOrders"
     }
 
     private lateinit var storage: Cache<String, Order>
@@ -28,11 +30,12 @@ class DistributedOrderRepository(private val cacheManager: CacheManager) : Order
         val config: CacheConfiguration<String, Order> = CacheConfiguration()
         config.cacheMode = CacheMode.REPLICATED
         config.isStoreByValue = false
+        config.name = JCACHE_NAME
         //config.setReadThrough(true)
         //config.setCacheLoaderFactory(FactoryBuilder.SingletonFactory(cacheLoader()));
         config.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration(TimeUnit.MINUTES, 180)))
         config.isStatisticsEnabled = true
-        storage = cacheManager.createCache(JCACHE_NAME, config)
+        storage = ignite.getOrCreateCache(config)
     }
 
     private fun cacheLoader(): CacheLoader<String, Order> {

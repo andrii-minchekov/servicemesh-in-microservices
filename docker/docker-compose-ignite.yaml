@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  web-console-standalone:
+    image: apacheignite/web-console-standalone
+    tty: true
+    stdin_open: true
+    ports:
+      - "80:80"
+    volumes:
+      - /Users/anmi/tools/ignite/web-console:/var/lib/mongodb
+
+  web-agent:
+    image: apacheignite/web-agent
+    tty: true
+    stdin_open: true
+    ports: []
+    environment:
+      - NODE_URI="http://192.168.1.118:8085"
+      - SERVER_URI="http://web-console-standalone"
+      - TOKENS=jtmX99RNKI78lILyRCwx
+    depends_on:
+      - web-console-standalone

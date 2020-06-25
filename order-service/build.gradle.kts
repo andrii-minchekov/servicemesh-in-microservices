@@ -23,9 +23,16 @@ tasks {
     }
 }
 
+configurations {
+    all {
+        exclude(group="org.springframework.boot", module="spring-boot-starter-tomcat")
+    }
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -33,7 +40,8 @@ dependencies {
     implementation("org.hobsoft.spring:spring-rest-template-logger:2.0.0")
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
     implementation("javax.cache:cache-api:1.1.1")
-    implementation("org.apache.ignite:ignite-core:2.8.1")
+    //implementation("org.apache.ignite:ignite-core:2.7.0")
+    implementation("org.apache.ignite:ignite-rest-http:2.7.0")
     implementation("org.apache.ignite:ignite-spring-boot-autoconfigure-ext:1.0.0")
 
    // runtimeOnly("org.springframework.boot:spring-boot-devtools")

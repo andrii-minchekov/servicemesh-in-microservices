@@ -11,8 +11,6 @@ import org.springframework.boot.runApplication
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.web.client.RestTemplate
-import javax.cache.CacheManager
-import javax.cache.Caching
 
 
 fun main(args: Array<String>) {
@@ -44,13 +42,12 @@ class OrderServiceApplication {
             val ipFinder = TcpDiscoveryMulticastIpFinder()
             spi.ipFinder = ipFinder
             cfg.discoverySpi = spi
+            //-DIGNITE_JETTY_PORT=21666
         }
     }
 
-    @Bean
-    fun cacheManager():CacheManager {
-        return Caching.getCachingProvider().cacheManager
-    }
+//    @Bean
+//    fun cacheManager(ignite:Ignite):CacheManager {
+//        return Caching.getCachingProvider().cacheManager
+//    }
 }
-
-

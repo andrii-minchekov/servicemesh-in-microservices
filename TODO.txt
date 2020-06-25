@@ -1,0 +1,10 @@
+Setup ignite logging (add ignite slf4j)
+
+Why calling method getCacheManger() starts second instance of Ignite?
+
+Use grid gain control center for monitoring and agent https://www.gridgain.com/resources/management-tools
+GridGain Control Center is a comprehensive cluster management and developer tool for GridGain and Apache Ignite, available for free as a SaaS solution.
+Control Center supports GridGain 8.7+ and Apache Ignite 2.8+. Ignite users must install the Control Center Agent, which is available for free on on the GridGain Downloads page.
+
+Notes
+Performance with 3_000_000 is cool (1-2 secs) but some tests fail (5 passed and 5 failed), setup = 2 nodes on 1 PC. Compare it with 2 instances of hazelcast on 1 PC.
