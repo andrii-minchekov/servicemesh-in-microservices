@@ -76,7 +76,7 @@ class OrderControllerTest {
         assertThat(createResponse.status).isEqualTo(HttpStatus.BAD_REQUEST.value())
 
         val expectedApiError = ApiError(
-            "any", "order-4002", "Input fields contain errors",
+            "order-4002", "Input fields contain errors","any",
             subErrors = listOf(ApiSubError("orderDto", "userId", "1", "size must be between 36 and 36"))
         )
         assertThat(createResponse.contentAsString.deserialize(ApiError::class.java)).isEqualTo(expectedApiError)

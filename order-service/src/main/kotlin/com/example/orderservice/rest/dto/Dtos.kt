@@ -14,7 +14,7 @@ data class User(var id: String = "1000") : Dto()
 
 data class OrderDto(
     @JsonProperty("userId")
-    @get:Size(min = 1, max = 36)
+    @get:Size(min = 36, max = 36)
     var userId: String,
     @JsonProperty("items")
     var items: Array<LineItemDto> = arrayOf(LineItemDto("DEFAULT_ITEM1", 1))
