@@ -4,6 +4,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.spring")
+    id("com.gorylenko.gradle-git-properties") version ("2.4.1")
 }
 
 java {
@@ -23,15 +24,25 @@ tasks {
     }
 }
 
+springBoot {
+    buildInfo {
+        properties {
+            name = "Order Service Application"
+        }
+    }
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
     implementation("org.hobsoft.spring:spring-rest-template-logger:2.0.0")
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.7")
+
     runtimeOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
@@ -53,7 +64,7 @@ jib {
     }
     to {
         image = "$dockerRepository/order-service"
-        credHelper = "docker-credential-osxkeychain"
+        setCredHelper("docker-credential-osxkeychain")
     }
     val debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5556"
     container {
