@@ -60,15 +60,17 @@ val dockerRepository: String by project
 
 jib {
     from {
-        image = "gcr.io/distroless/java:debug"
+        image = "gcr.io/distroless/java"
     }
     to {
         image = "$dockerRepository/order-service"
-        setCredHelper("docker-credential-osxkeychain")
+        tags = mutableSetOf(project.version.toString(), "latest")
+//        setCredHelper("docker-credential-osxkeychain")
     }
     val debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5556"
     container {
         ports = mutableListOf("8072")
-        jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
+        environment = mutableMapOf<String, String>(Pair("JAVA_TOOL_OPTIONS", "-Dhttp.proxyHost=linkerd -Dhttp.proxyPort=4141"))
+//        jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
     }
 }

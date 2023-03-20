@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
     group = "com.example"
-    version = "1.0-SNAPSHOT"
+    version = "1.0.16-SNAPSHOT"
 
     repositories {
         mavenCentral()
