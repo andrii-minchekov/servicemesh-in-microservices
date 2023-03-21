@@ -52,11 +52,11 @@ dependencyManagement {
 
 jib {
     from {
-        image = "gcr.io/distroless/java:debug"
+        image = "gcr.io/distroless/java"
     }
     to {
         image = "$dockerRepository/api-gateway"
-        credHelper = "docker-credential-osxkeychain"
+        credHelper = "osxkeychain"
     }
     container {
         ports = ["8070"]

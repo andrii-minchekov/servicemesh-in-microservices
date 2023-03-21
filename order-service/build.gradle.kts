@@ -60,7 +60,7 @@ val dockerRepository: String by project
 
 jib {
     from {
-        image = "gcr.io/distroless/java"
+        image = "gcr.io/distroless/java:debug"
     }
     to {
         image = "$dockerRepository/order-service"

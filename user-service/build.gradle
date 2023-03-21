@@ -23,8 +23,6 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: "com.google.cloud.tools.jib"
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
@@ -44,7 +42,7 @@ dependencies {
 //    implementation 'de.codecentric:spring-boot-admin-starter-server'
 
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
-    
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.2")
@@ -74,15 +72,18 @@ compileTestKotlin {
 
 jib {
     from {
-        image = "gcr.io/distroless/java:debug"
+        image = "gcr.io/distroless/java"
+//        image = "gcr.io/distroless/java:debug"
     }
     to {
         image = "${dockerRepository}/user-service"
-        credHelper = "docker-credential-osxkeychain"
+        tags = [project.version.toString(), "latest"]
+        credHelper = "osxkeychain"
     }
     container {
         ports = ['8071']
-        def debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5557"
-        jvmFlags = ["-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141"]
+        environment =["JAVA_TOOL_OPTIONS": "-Dhttp.proxyHost=linkerd -Dhttp.proxyPort=4141"]
+//      val debugFlag = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5556"
+//      jvmFlags = mutableListOf("-Dhttp.proxyHost=linkerd", "-Dhttp.proxyPort=4141")
     }
 }
